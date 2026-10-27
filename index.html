@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="نجد من نجد 🤍">
+<meta property="og:title" content="Najd 🤍">
+<title>Najd 🤍</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#08122a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;700&family=Tajawal:wght@400;500;700&family=Amiri:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* Layout: one full-screen "scene" at a time, like chapters of a film, over a living night sky */
+:root{
+  --night:#08122a;      /* deep sky */
+  --navy:#132650;       /* surfaces */
+  --tide:#2c4c94;       /* raised / active */
+  --frost:#dfe8fb;      /* text */
+  --mist:#93a6cf;       /* secondary text */
+  --pearl:#ffffff;      /* her white heart */
+  --lamp:#f2d58c;       /* warm gold accent, used sparingly */
+  --f-display:'El Messiri','Tajawal',serif;
+  --f-body:'Tajawal',system-ui,sans-serif;
+  --f-letter:'Amiri','Times New Roman',serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{height:100%}
+body{margin:0;direction:rtl;background:var(--night);color:var(--frost);font-family:var(--f-body);overflow:hidden;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--lamp);outline-offset:3px}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+
+.scene{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding-block:calc(env(safe-area-inset-top,0px) + 20px) calc(env(safe-area-inset-bottom,0px) + 20px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  opacity:0;pointer-events:none;transition:opacity .9s ease}
+.scene.on{opacity:1;pointer-events:auto}
+
+/* sound toggle */
+#mute{position:fixed;z-index:20;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));
+  width:40px;height:40px;border-radius:50%;border:1px solid rgba(223,232,251,.25);background:rgba(19,38,80,.6);color:var(--frost);
+  display:grid;place-items:center;backdrop-filter:blur(6px)}
+#mute svg{width:18px;height:18px}
+
+/* ---------- TAP TO BEGIN ---------- */
+#gate{gap:28px;text-align:center}
+.moon{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#cfdcf7 55%,#8ea6dc);
+  box-shadow:0 0 60px rgba(223,232,251,.35);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 90px rgba(223,232,251,.55);transform:scale(1.04)}}
+#gate p{margin:0;color:var(--mist);font-size:1rem;line-height:1.8;max-width:30ch}
+.btn{border:none;border-radius:999px;padding:14px 34px;font-size:1.1rem;font-weight:700;background:var(--pearl);color:var(--night);
+  box-shadow:0 10px 40px rgba(255,255,255,.18);transition:transform .2s}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;color:var(--frost);border:1px solid rgba(223,232,251,.35);box-shadow:none}
+
+/* ---------- DM OPENING ---------- */
+#dm{justify-content:center}
+.phone{width:min(340px,100%);border-radius:28px;background:rgba(10,20,44,.85);border:1px solid rgba(223,232,251,.12);
+  padding:16px 16px 22px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.phone .top{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(223,232,251,.08);direction:ltr}
+.phone .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--tide),var(--navy));display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.phone .who{font-weight:700;font-size:.95rem}
+.phone .stat{font-size:.72rem;color:var(--mist)}
+.thread{min-height:190px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding-top:16px;direction:ltr}
+.stamp{align-self:center;font-size:.72rem;color:var(--mist);opacity:0;transition:opacity .6s}
+.stamp.show{opacity:1}
+.msg{align-self:flex-end;background:linear-gradient(135deg,#3b5ea8,#2c4c94);color:#fff;padding:9px 16px;border-radius:20px 20px 4px 20px;
+  font-size:1.05rem;transform:scale(.4);opacity:0;transform-origin:right bottom;transition:all .45s cubic-bezier(.3,1.5,.5,1)}
+.msg.show{transform:none;opacity:1}
+.typing{align-self:flex-end;display:none;gap:4px;padding:12px 14px;border-radius:20px;background:rgba(223,232,251,.1)}
+.typing.show{display:flex}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mist);animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.seen{align-self:flex-end;font-size:.7rem;color:var(--mist);opacity:0;transition:opacity .6s}
+.seen.show{opacity:1}
+
+/* ---------- TITLE ---------- */
+#title{text-align:center;gap:10px}
+#title .kicker{letter-spacing:.35em;font-size:.8rem;color:var(--mist);opacity:0;transition:opacity 1.2s}
+#title h1{white-space:nowrap;font-family:var(--f-display);font-weight:700;font-size:clamp(2.6rem,14vw,5.5rem);margin:0;line-height:1.15;color:var(--pearl);
+  text-shadow:0 0 40px rgba(223,232,251,.35)}
+#title h1 span{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(16px);transition:all 1s ease}
+#title h1 span.in{opacity:1;filter:none;transform:none}
+#title .sub{font-family:var(--f-letter);font-style:italic;font-size:1.25rem;color:var(--lamp);opacity:0;transition:opacity 1.4s}
+#title .go{margin-top:30px;opacity:0;transition:opacity 1s}
+.show-o{opacity:1 !important}
+
+/* ---------- MAP ---------- */
+#map{justify-content:flex-start;gap:14px;overflow-y:auto}
+.word{display:flex;gap:5px;direction:rtl;align-items:flex-end;margin-top:44px}
+.word .gap{width:10px}
+.slot{width:32px;height:44px;border-radius:10px;border:1px dashed rgba(223,232,251,.3);display:grid;place-items:center;
+  font-family:var(--f-display);font-size:1.6rem;font-weight:700;color:transparent;transition:all .6s}
+.slot.got{border:1px solid var(--pearl);color:var(--pearl);background:rgba(255,255,255,.07);box-shadow:0 0 18px rgba(255,255,255,.25)}
+.word-cap{font-size:.85rem;color:var(--mist);margin:0}
+.path{position:relative;width:min(360px,100%);flex:none}
+.path svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:none;border:none;color:var(--frost);padding:0;width:120px}
+.node .dot{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:1.3rem;
+  background:var(--navy);border:2px solid rgba(223,232,251,.18);color:var(--mist);transition:all .4s}
+.node .lbl{font-size:.82rem;color:var(--mist);text-align:center;line-height:1.3}
+.node.open .dot{background:var(--pearl);color:var(--night);border-color:var(--pearl);animation:ping 2s infinite}
+.node.open .lbl{color:var(--frost);font-weight:700}
+.node.done .dot{background:var(--tide);color:var(--pearl);border-color:var(--pearl)}
+.node.done .lbl{color:var(--frost)}
+.node.locked{cursor:default}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}100%{box-shadow:0 0 0 18px rgba(255,255,255,0)}}
+.preview-note{font-size:.78rem;color:var(--mist);text-align:center;margin:6px 0 30px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.preview-note button{background:none;border:1px solid rgba(223,232,251,.25);color:var(--mist);border-radius:999px;padding:6px 14px;font-size:.78rem}
+
+/* ---------- CHAPTER INTRO CARD ---------- */
+#c1intro{text-align:center;gap:16px}
+.chap-no{font-size:.8rem;letter-spacing:.3em;color:var(--lamp)}
+.chap-title{font-family:var(--f-display);font-size:clamp(2.4rem,11vw,3.6rem);margin:0;color:var(--pearl);line-height:1.2}
+.chap-date{font-size:.95rem;color:var(--mist)}
+.chap-story{max-width:32ch;line-height:1.9;font-size:1.08rem;margin:6px 0 14px}
+
+/* ---------- CHAPTER 1 GAME ---------- */
+#c1game{justify-content:flex-start;gap:10px;padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+.hud{display:flex;gap:10px;align-items:center;direction:rtl}
+.hud .pip{width:30px;height:30px;border-radius:50%;border:1.5px dashed rgba(223,232,251,.35);display:grid;place-items:center;font-size:.8rem;transition:all .4s}
+.hud .pip.got{border:1.5px solid var(--pearl);background:var(--pearl);color:var(--night);font-weight:700}
+.hint{font-size:.95rem;color:var(--mist);min-height:1.6em;text-align:center;transition:color .3s}
+.hint.warn{color:var(--lamp)}
+#field{position:relative;width:min(420px,100%);flex:1;overflow:hidden;border-radius:24px;
+  background:linear-gradient(180deg,rgba(19,38,80,.15),rgba(19,38,80,.55));border:1px solid rgba(223,232,251,.08);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%)}
+.bub{position:absolute;top:0;left:0;padding:8px 15px;border-radius:18px;font-size:1rem;white-space:nowrap;border:none;color:var(--frost);
+  background:rgba(223,232,251,.12);will-change:transform;direction:ltr;font-family:var(--f-body)}
+.bub.me{background:linear-gradient(135deg,#3b5ea8,#2c4c94);color:#fff}
+.bub.pop{animation:popout .5s forwards}
+@keyframes popout{to{transform:var(--t) scale(1.6);opacity:0}}
+.bub.no{animation:nope .4s}
+@keyframes nope{25%{margin-left:-6px}75%{margin-left:6px}}
+.spark{position:absolute;pointer-events:none;font-size:1.1rem;animation:spark 1s forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}
+
+/* ---------- REWARD ---------- */
+#reward{text-align:center;gap:14px}
+.big-letter{font-family:var(--f-display);font-weight:700;font-size:7rem;line-height:1;color:var(--pearl);
+  text-shadow:0 0 50px rgba(255,255,255,.6);animation:drop 1s cubic-bezier(.3,1.4,.5,1)}
+@keyframes drop{from{transform:scale(2.4);opacity:0;filter:blur(12px)}}
+.reward-cap{font-family:var(--f-letter);font-size:1.3rem;max-width:28ch;line-height:1.8;margin:0}
+.reward-sub{color:var(--mist);font-size:.92rem;margin:0}
+
+/* ---------- CHAPTER 2: VOLLEYBALL ---------- */
+#c2game{justify-content:flex-start;gap:10px;padding-top:calc(env(safe-area-inset-top,0px) + 62px)}
+.board{display:flex;align-items:center;gap:14px;direction:rtl;background:rgba(8,18,42,.7);border:1px solid rgba(223,232,251,.15);
+  border-radius:16px;padding:8px 18px}
+.board .team{display:flex;flex-direction:column;align-items:center;min-width:64px}
+.board .tn{font-size:.75rem;color:var(--mist)}
+.board .sc{font-family:var(--f-display);font-weight:700;font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums;direction:ltr}
+.board .us .sc{color:var(--pearl)}
+.board .them .sc{color:var(--mist)}
+.board .sep{color:var(--mist);font-size:1.4rem}
+.board .sc.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.45);color:var(--lamp)}}
+#court{width:min(420px,100%);flex:1;border-radius:24px;touch-action:none;display:block;min-height:0}
+.toast{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.6);z-index:5;font-family:var(--f-display);font-weight:700;
+  font-size:2.2rem;color:var(--pearl);text-shadow:0 0 30px rgba(255,255,255,.6);opacity:0;pointer-events:none;white-space:nowrap}
+.toast.show{animation:toast 1.1s forwards}
+@keyframes toast{20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+
+/* ---------- CHAPTER 3: ER SHIFT ---------- */
+#c3game{justify-content:flex-start;gap:12px;padding-top:calc(env(safe-area-inset-top,0px) + 62px)}
+.monitor{width:min(420px,100%);border-radius:16px;background:#050b18;border:1px solid rgba(223,232,251,.15);padding:10px 12px;display:flex;gap:12px;align-items:stretch}
+.monitor canvas{flex:1;min-width:0;height:72px;display:block}
+.vitals{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;min-width:72px;direction:ltr}
+.vitals .k{font-size:.65rem;color:#6fe3a5;letter-spacing:.1em}
+.vitals .bpm{font-family:var(--f-display);font-weight:700;font-size:1.9rem;line-height:1;color:#6fe3a5;font-variant-numeric:tabular-nums}
+.vitals.flat .k,.vitals.flat .bpm{color:#ff8a8a}
+.rate{width:min(420px,100%);display:flex;flex-direction:column;gap:6px}
+.rate .bar{position:relative;height:12px;border-radius:999px;background:rgba(223,232,251,.1);direction:ltr}
+.rate .zone{position:absolute;top:0;bottom:0;left:40%;width:20%;background:rgba(111,227,165,.35);border-radius:999px}
+.rate .needle{position:absolute;top:-5px;width:4px;height:22px;border-radius:2px;background:var(--pearl);left:0;transition:left .25s;transform:translateX(-50%)}
+.rate .labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--mist);direction:ltr}
+.prog{width:min(420px,100%);height:8px;border-radius:999px;background:rgba(223,232,251,.1);overflow:hidden;direction:rtl}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pearl),#6fe3a5);transition:width .2s}
+.ward{position:relative;width:min(420px,100%);flex:1;min-height:0;display:grid;place-items:center}
+#chest{border:none;background:none;padding:0;width:min(300px,82%);touch-action:manipulation;position:relative}
+#chest svg{width:100%;height:auto;display:block}
+#chest .press{transition:transform .08s}
+#chest.down .press{transform:translateY(3px) scaleY(.97)}
+.guide{position:absolute;left:50%;top:44%;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;border:2px solid rgba(255,255,255,.7);pointer-events:none;opacity:0}
+.guide.beat{animation:guide .5s ease-out}
+@keyframes guide{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(1.4)}}
+.tarzan{position:absolute;bottom:4px;inset-inline-start:0;width:78px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .8s cubic-bezier(.5,-0.5,.6,1.3)}
+.tarzan svg{width:52px;height:auto;transform-origin:50% 100%;transition:transform .9s cubic-bezier(.6,-0.4,.7,1.4)}
+.tarzan.faint svg{transform:rotate(-88deg) translate(-10px,-6px)}
+.tarzan .say{font-size:.72rem;line-height:1.4;background:var(--frost);color:var(--night);border-radius:10px;padding:5px 8px;text-align:center;min-height:1.2em;max-width:110px;opacity:0;transition:opacity .3s}
+.tarzan .say.on{opacity:1}
+
+/* ---------- CHAPTER 4: TODAY OR NEVER ---------- */
+.cal{display:flex;gap:10px;direction:rtl;margin:4px 0 8px}
+.cal .day{width:78px;border-radius:12px;background:var(--navy);border:1px solid rgba(223,232,251,.15);overflow:hidden;text-align:center}
+.cal .mo{font-size:.65rem;letter-spacing:.12em;background:var(--tide);padding:3px 0;direction:ltr}
+.cal .dn{font-family:var(--f-display);font-weight:700;font-size:1.7rem;line-height:1.3}
+.cal .nt{font-size:.62rem;color:var(--mist);padding:0 4px 6px;direction:ltr;min-height:2.4em}
+.cal .day.x .dn,.cal .day.x .nt{text-decoration:line-through;text-decoration-color:var(--lamp);opacity:.6}
+.cal .day.circ{border:2px solid var(--pearl);box-shadow:0 0 18px rgba(255,255,255,.25)}
+#c4game{justify-content:flex-start;gap:8px;padding-top:calc(env(safe-area-inset-top,0px) + 62px);text-align:center}
+.clock4{font-family:var(--f-display);font-weight:700;font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums;direction:ltr}
+.clock4 small{font-size:.9rem;color:var(--mist);margin-left:6px}
+.date4{font-size:.8rem;color:var(--mist);margin-top:-2px}
+#heartBtn{border:none;background:none;padding:0;width:min(230px,60vw);aspect-ratio:1;max-width:100%;display:grid;place-items:center;touch-action:manipulation;margin-top:6px}
+#heartBtn svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 30px rgba(255,255,255,.18))}
+#heart4{transform-origin:50% 55%;transform-box:fill-box}
+#heart4.beat{animation:lub .32s ease-out}
+@keyframes lub{0%{transform:scale(1)}18%{transform:scale(1.14)}38%{transform:scale(1.02)}55%{transform:scale(1.08)}100%{transform:scale(1)}}
+.bpm4{font-family:var(--f-display);font-weight:700;font-size:1.9rem;font-variant-numeric:tabular-nums;direction:ltr;line-height:1}
+.bpm4 small{font-size:.8rem;color:var(--mist);margin-left:4px;font-family:var(--f-body)}
+.love{display:flex;gap:0;direction:rtl;min-height:3.4rem;align-items:center;justify-content:center}
+.love span{font-family:var(--f-letter);font-size:3rem;line-height:1;color:var(--pearl);opacity:.12;transition:all .8s}
+.love span.on{opacity:1;text-shadow:0 0 24px rgba(255,255,255,.6)}
+.love.full span{color:var(--lamp)}
+.judge{height:1.4em;font-size:.95rem;font-weight:700}
+.judge.ok{color:#6fe3a5}.judge.bad{color:var(--lamp)}
+
+/* ---------- CHAPTER 5: OUR LANGUAGE ---------- */
+#c5game{justify-content:flex-start;gap:14px;padding-top:calc(env(safe-area-inset-top,0px) + 62px)}
+.c5top{display:flex;align-items:center;gap:8px;width:min(420px,100%);justify-content:space-between}
+.c5top .ttl{font-family:var(--f-display);font-size:1.1rem}
+.dots5{display:flex;gap:6px}
+.dots5 i{width:8px;height:8px;border-radius:50%;background:rgba(223,232,251,.18);transition:background .3s}
+.dots5 i.on{background:var(--pearl)}
+.chat5{width:min(420px,100%);flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px;scroll-behavior:smooth}
+.b5{max-width:85%;padding:11px 16px;border-radius:20px;line-height:1.75;font-size:1.05rem;animation:pop .45s ease}
+.b5.s{align-self:flex-start;background:linear-gradient(135deg,#3b5ea8,#2c4c94);color:#fff;border-end-start-radius:6px}
+.b5.n{align-self:flex-end;background:rgba(223,232,251,.12);border-end-end-radius:6px}
+.blank{display:inline-block;min-width:4.2em;border-bottom:2px dashed rgba(255,255,255,.7);text-align:center;margin:0 3px;font-weight:700;color:var(--lamp)}
+.blank.filled{border-bottom-color:transparent;animation:fillin .6s}
+@keyframes fillin{0%{transform:scale(1.6);text-shadow:0 0 20px var(--lamp)}100%{transform:none}}
+.opts{width:min(420px,100%);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:6px}
+.opt{border:1px solid rgba(223,232,251,.25);background:var(--navy);color:var(--frost);border-radius:14px;padding:13px 8px;font-size:1.05rem;font-weight:700;transition:transform .15s,background .2s}
+.opt:active{transform:scale(.96)}
+.opt.no{animation:nope .4s;background:#3a2a4a;border-color:rgba(242,213,140,.4)}
+.opt.yes{background:var(--pearl);color:var(--night)}
+.dict5{width:min(380px,100%);background:#f6f1e6;color:#1b2440;border-radius:18px;padding:20px 20px 22px;box-shadow:0 20px 50px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;gap:12px;max-height:62vh;overflow-y:auto}
+.dict5 h3{margin:0;text-align:center;font-family:var(--f-display);font-size:1.15rem;color:#2c4c94;border-bottom:1px solid #e0d6c2;padding-bottom:10px}
+.dict5 .ent{display:flex;flex-direction:column;gap:2px}
+.dict5 .w{font-family:var(--f-letter);font-size:1.45rem;font-weight:700;line-height:1.3}
+.dict5 .pos{font-size:.72rem;color:#7a6a4e;font-style:italic}
+.dict5 .ex{font-size:.88rem;color:#3a4566;line-height:1.6}
+#c5done{gap:16px;text-align:center}
+
+/* ---------- CHAPTER 6: SKY ---------- */
+#c6game{justify-content:flex-start;gap:12px;padding-top:calc(env(safe-area-inset-top,0px) + 62px);text-align:center}
+.sky6{position:relative;width:min(380px,100%);aspect-ratio:1;max-width:100%;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle,#152a55 0%,#0b1630 68%,#060d1e 100%);box-shadow:0 0 0 2px rgba(255,255,255,.14),0 0 60px rgba(159,179,221,.18);touch-action:manipulation}
+.sky6 svg{width:100%;height:100%;display:block}
+.sky6 .sky-lines{stroke:rgba(205,217,242,.35);stroke-width:.004;fill:none;opacity:0;transition:opacity 2.2s .4s}
+.sky6 .sky-lab text{opacity:0;transition:opacity 1.2s 1.4s}
+.sky6 .sky-lab text{font-family:var(--f-body);fill:rgba(238,242,251,.85);text-anchor:middle}
+.sky6.lit .sky-lines,.sky6.lit .sky-lab text{opacity:1}
+.sky6 .ring{display:none}
+.sky6 .found{fill:none;stroke:var(--lamp);stroke-width:.007;animation:found 1s ease-out}
+@keyframes found{from{r:.2;opacity:0}}
+.sky6 .miss{fill:none;stroke:rgba(255,255,255,.5);stroke-width:.004;animation:missr .6s forwards}
+@keyframes missr{to{r:.09;opacity:0}}
+.sky6 .help{fill:none;stroke:rgba(242,213,140,.7);stroke-width:.005;animation:pinpulse 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pinpulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.8);opacity:0}}
+.ask6{width:min(380px,100%);background:rgba(19,38,80,.6);border:1px solid rgba(223,232,251,.15);border-radius:16px;padding:12px 16px;min-height:5.6em;
+  display:flex;flex-direction:column;gap:4px;justify-content:center}
+.ask6 .q{font-weight:700;font-size:1.05rem}
+.ask6 .f{font-size:.92rem;color:var(--mist);line-height:1.7}
+.ask6 .f.fact{color:var(--lamp)}
+.stamp6{font-size:.78rem;color:var(--mist)}
+
+/* ---------- CHAPTER 7: 77 DAYS ---------- */
+#c7game{justify-content:flex-start;gap:10px;padding-top:calc(env(safe-area-inset-top,0px) + 62px);text-align:center}
+.cnt7{font-family:var(--f-display);font-weight:700;font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
+.cnt7 small{font-size:.95rem;color:var(--mist);font-family:var(--f-body);font-weight:500}
+#days7{width:min(380px,100%);aspect-ratio:1.05;max-width:100%;touch-action:none;display:block}
+#days7 circle{fill:rgba(223,232,251,.14);transition:fill .3s,r .3s}
+#days7 circle.lit{fill:var(--pearl)}
+#days7 circle.mile{stroke:var(--lamp);stroke-width:1.5}
+#days7 circle.mile.lit{fill:var(--lamp)}
+#days7.glow circle.lit{animation:glow7 1.6s ease-in-out infinite}
+@keyframes glow7{50%{fill:#ffd9e4}}
+.day7{min-height:3.4em;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.day7 .d{font-weight:700;font-size:1.05rem}
+.day7 .m{color:var(--lamp);font-size:.95rem}
+
+/* ---------- CHAPTER 8: FINAL DOOR ---------- */
+#c8door{gap:22px;text-align:center}
+.door{position:relative;width:min(240px,64vw);aspect-ratio:.62;border-radius:999px 999px 14px 14px;background:#fff8e6;
+  box-shadow:0 0 80px rgba(255,248,230,.0);perspective:900px;cursor:pointer;border:none;padding:0;transition:box-shadow 1.2s}
+.door .leaf{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(180deg,#24407a,#132650);border:2px solid rgba(223,232,251,.25);
+  transition:transform 1.6s cubic-bezier(.6,0,.3,1);display:flex;align-items:center}
+.door .leaf.r{right:0;border-radius:0 999px 14px 0;transform-origin:right center;justify-content:flex-start;padding-left:8px}
+.door .leaf.l{left:0;border-radius:999px 0 0 14px;transform-origin:left center;justify-content:flex-end;padding-right:8px}
+.door .knob{width:10px;height:10px;border-radius:50%;background:var(--lamp)}
+.door .keys{position:absolute;inset:auto 0 18% 0;display:flex;justify-content:center;gap:4px;direction:rtl;z-index:2;transition:opacity .6s}
+.door .keys span{width:22px;height:28px;border-radius:6px;background:rgba(8,18,42,.6);border:1px solid rgba(242,213,140,.6);display:grid;place-items:center;
+  font-family:var(--f-display);font-weight:700;color:var(--lamp);font-size:.95rem}
+.door .keys span.empty{color:transparent;border-style:dashed;animation:breathe 2s infinite}
+.door.open{box-shadow:0 0 120px rgba(255,248,230,.6)}
+.door.open .leaf.r{transform:rotateY(-105deg)}
+.door.open .leaf.l{transform:rotateY(105deg)}
+.door.open .keys{opacity:0}
+#c8word{gap:22px;text-align:center}
+.slots8{display:flex;gap:5px;direction:rtl}
+.slots8 .slot{width:34px;height:46px}
+.tiles8{display:grid;grid-template-columns:repeat(4,58px);gap:10px;direction:rtl}
+.tile8{height:58px;border-radius:14px;border:1px solid rgba(223,232,251,.3);background:var(--navy);color:var(--pearl);
+  font-family:var(--f-display);font-weight:700;font-size:1.7rem;transition:all .3s}
+.tile8.used{opacity:0;transform:scale(.4);pointer-events:none}
+.tile8.no{animation:nope .4s}
+.word8{font-family:var(--f-display);font-weight:700;font-size:clamp(2.6rem,13vw,4.4rem);color:var(--pearl);text-shadow:0 0 40px rgba(255,255,255,.6);
+  white-space:nowrap;animation:drop 1.2s cubic-bezier(.3,1.4,.5,1)}
+#c8mirror{gap:18px;text-align:center}
+.mirror{position:relative;width:min(280px,72vw);aspect-ratio:.8;border-radius:999px;overflow:hidden;border:4px solid var(--lamp);
+  box-shadow:0 0 0 10px rgba(242,213,140,.12),0 0 80px rgba(242,213,140,.35);background:radial-gradient(circle at 50% 40%,#2c4c94,#0b1638 75%)}
+.mirror video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.mirror .glint{position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.25) 45%,transparent 60%);animation:glint 3.5s infinite}
+@keyframes glint{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.mirror .alt{position:absolute;inset:0;display:grid;place-items:center;padding:24px;font-family:var(--f-letter);font-size:1.15rem;line-height:1.8;color:var(--frost)}
+.treasure{font-family:var(--f-letter);font-size:1.6rem;line-height:1.6;color:var(--pearl);max-width:18ch}
+#c8cake{gap:14px;text-align:center}
+.cake{position:relative;width:min(300px,80vw)}
+.cake svg{width:100%;height:auto;display:block}
+.cnd{position:absolute;width:6px;height:26px;margin-left:-3px;border-radius:2px;background:repeating-linear-gradient(180deg,#fff 0 5px,#9fb3dd 5px 9px);border:none;padding:0}
+.cnd::after{content:"";position:absolute;left:50%;top:-15px;width:9px;height:14px;margin-left:-4.5px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(circle at 50% 70%,#fff 0 20%,#ffd36b 40%,#ff8a3d 75%,transparent 80%);animation:flick .25s infinite alternate;transition:opacity .3s}
+.cnd.out::after{opacity:0}
+@keyframes flick{to{transform:scaleY(1.15) rotate(3deg)}}
+.smoke{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(223,232,251,.5);animation:smoke 1.4s forwards;pointer-events:none}
+@keyframes smoke{to{transform:translateY(-40px) scale(3);opacity:0}}
+.cake-cnt{font-size:.9rem;color:var(--mist)}
+#c8letter{justify-content:flex-start;padding-top:calc(env(safe-area-inset-top,0px) + 62px);gap:10px}
+.lt-head{display:flex;align-items:center;gap:10px;width:min(420px,100%);direction:ltr;padding-bottom:10px;border-bottom:1px solid rgba(223,232,251,.1)}
+.lt-head .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--tide),var(--navy));display:grid;place-items:center;font-weight:700}
+.lt-head .who{font-weight:700}.lt-head .st{font-size:.72rem;color:#6fe3a5}
+.lt{width:min(420px,100%);flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:8px 2px 20px}
+.lt .b5{max-width:88%;font-family:var(--f-letter);font-size:1.12rem;line-height:1.85}
+.lt .sign{align-self:flex-start;font-family:var(--f-letter);color:var(--lamp);padding-inline-start:6px;animation:pop .5s}
+#ltNext{flex:none}
+#c8end{gap:16px;text-align:center}
+.end-step{font-family:var(--f-letter);font-size:1.35rem;line-height:1.8;max-width:24ch;margin:0}
+.word-chip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 8px 8px 18px}
+.word-chip b{font-family:var(--f-display);font-size:1.4rem}
+.word-chip button{border:none;border-radius:999px;background:var(--pearl);color:var(--night);font-weight:700;padding:8px 14px}
+.ig{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.fin{font-family:var(--f-display);font-size:clamp(1.8rem,8vw,2.6rem);color:var(--pearl);margin:10px 0 0}
+.lock{gap:16px;text-align:center}
+.lock .cd{display:flex;gap:10px;direction:ltr}
+.lock .cd div{background:var(--navy);border:1px solid rgba(223,232,251,.15);border-radius:14px;padding:10px 0;width:68px}
+.lock .cd b{display:block;font-family:var(--f-display);font-size:1.8rem;font-variant-numeric:tabular-nums}
+.lock .cd span{font-size:.72rem;color:var(--mist)}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.2s !important}}
+</style>
+</head>
+<body>
+
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<button id="mute" aria-label="الصوت" hidden></button>
+
+<!-- 0. gate -->
+<section class="scene on" id="gate">
+  <div class="moon" aria-hidden="true"></div>
+  <p>شغّلي الصوت، وخلي جوالك قريب منك<br>اللي جاي لك أنتِ بس 🤍</p>
+  <button class="btn" id="begin">ابدئي</button>
+</section>
+
+<!-- 1. DM -->
+<section class="scene" id="dm" aria-live="polite">
+  <div class="phone">
+    <div class="top"><div class="av">S</div><div><div class="who">idk.t7</div><div class="stat">Instagram</div></div></div>
+    <div class="thread">
+      <div class="stamp" id="stamp">Aug 29</div>
+      <div class="typing" id="typing"><i></i><i></i><i></i></div>
+      <div class="msg" id="hey">Hey</div>
+      <div class="seen" id="seen">Seen</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. title -->
+<section class="scene" id="title">
+  <div class="kicker" id="kicker" dir="ltr">THE 21 QUEST</div>
+  <h1 id="h1" dir="rtl" aria-label="نجد من نجد"></h1>
+  <div class="sub" id="sub">مغامرة عمرك الواحد والعشرين</div>
+  <button class="btn go" id="toMap">يلا نبدأ</button>
+</section>
+
+<!-- 3. map -->
+<section class="scene" id="map">
+  <div class="word" id="word" aria-label="الكلمة السرية"></div>
+  <p class="word-cap" id="wordCap">كل فصل يعطيك حرف… اجمعيهم كلهم</p>
+  <div class="path" id="path"></div>
+  <div class="preview-note">
+    <span id="pvTxt">نسخة معاينة</span>
+    <button id="reset">إعادة من البداية</button>
+  </div>
+</section>
+
+<!-- 4. chapter 1 intro -->
+<section class="scene" id="c1intro">
+  <div class="chap-no">الفصل 1</div>
+  <h2 class="chap-title">الـ Hey</h2>
+  <div class="chap-date">29 أغسطس 2026</div>
+  <p class="chap-story">بين آلاف الرسايل اللي توصلك كل يوم… وحدة بس هي اللي بدت كل شي<br>لقطيها قبل لا تضيع</p>
+  <button class="btn" id="c1start">جاهزة</button>
+</section>
+
+<!-- 5. chapter 1 game -->
+<section class="scene" id="c1game">
+  <div class="hud" id="hud"></div>
+  <div class="hint" id="hint">المسي رسالة <b>Hey</b> الزرقا</div>
+  <div id="field"></div>
+</section>
+
+<!-- chapter 2 intro -->
+<section class="scene" id="c2intro">
+  <div class="chap-no">الفصل 2</div>
+  <h2 class="chap-title">الكابتن</h2>
+  <div class="chap-date">الماتش الحاسم</div>
+  <p class="chap-story">كل صاحباتك يبون يصيرون بفريقك… والحين الفريق محتاجك<br>النتيجة 21 – 24 والكل يطالع فيك<br>اضربي الكورة لما تلمس الدائرة… ورجعي الماتش</p>
+  <button class="btn" id="c2start">على الملعب</button>
+</section>
+
+<!-- chapter 2 game -->
+<section class="scene" id="c2game">
+  <div class="board" aria-live="polite">
+    <div class="team us"><span class="tn">فريق نجد</span><span class="sc" id="scUs">21</span></div>
+    <span class="sep">–</span>
+    <div class="team them"><span class="tn">الخصم</span><span class="sc" id="scThem">24</span></div>
+  </div>
+  <div class="hint" id="hint2">المسي الشاشة لما الكورة توصل للدائرة</div>
+  <canvas id="court" aria-label="ملعب الطائرة"></canvas>
+</section>
+<!-- chapter 3 intro -->
+<section class="scene" id="c3intro">
+  <div class="chap-no">الفصل 3</div>
+  <h2 class="chap-title">مناوبة طوارئ</h2>
+  <div class="chap-date">قسم الطوارئ · مناوبة الليل</div>
+  <p class="chap-story">جاتك حالة… المانيكان ما فيه نبض<br>اضغطي على صدره بإيقاع ثابت بين 100 و 120 ضغطة بالدقيقة<br>وطرزان؟ جا يسلم بس… انتبهي عليه 😂</p>
+  <button class="btn" id="c3start">لبست القفازات</button>
+</section>
+
+<!-- chapter 3 game -->
+<section class="scene" id="c3game">
+  <div class="monitor">
+    <canvas id="ecg" aria-hidden="true"></canvas>
+    <div class="vitals flat" id="vitals"><span class="k">HR</span><span class="bpm" id="hr">0</span></div>
+  </div>
+  <div class="rate" aria-hidden="true">
+    <div class="bar"><div class="zone"></div><div class="needle" id="needle"></div></div>
+    <div class="labels"><span>60</span><span>100</span><span>120</span><span>160</span></div>
+  </div>
+  <div class="hint" id="hint3">اضغطي على الصدر مع الدائرة</div>
+  <div class="prog" aria-hidden="true"><i id="cprBar"></i></div>
+  <div class="ward">
+    <button id="chest" aria-label="صدر المانيكان">
+      <svg viewBox="0 0 300 330" aria-hidden="true">
+        <rect x="20" y="40" width="260" height="280" rx="26" fill="#1a336b" stroke="rgba(223,232,251,.25)"/>
+        <rect x="40" y="56" width="220" height="250" rx="18" fill="#dfe8fb" opacity=".95"/>
+        <g class="press">
+          <ellipse cx="150" cy="70" rx="38" ry="36" fill="#e9d2bf"/>
+          <ellipse class="eye" cx="137" cy="66" rx="5" ry="1.2" fill="#3b3b4f"/><ellipse class="eye" cx="163" cy="66" rx="5" ry="1.2" fill="#3b3b4f"/>
+          <path d="M141 85 h18" stroke="#3b3b4f" stroke-width="2.5" fill="none" stroke-linecap="round" id="mouth"/>
+          <rect x="96" y="104" width="108" height="150" rx="30" fill="#e9d2bf"/>
+          <rect x="58" y="112" width="34" height="120" rx="16" fill="#e9d2bf"/>
+          <rect x="208" y="112" width="34" height="120" rx="16" fill="#e9d2bf"/>
+          <rect x="100" y="236" width="44" height="76" rx="18" fill="#c7d3ee"/>
+          <rect x="156" y="236" width="44" height="76" rx="18" fill="#c7d3ee"/>
+          <rect x="96" y="214" width="108" height="40" rx="14" fill="#c7d3ee"/>
+          <path d="M150 128 v40" stroke="rgba(59,59,79,.18)" stroke-width="2"/>
+          <g transform="translate(150 150)"><circle r="20" fill="none" stroke="#2c4c94" stroke-width="2.5" stroke-dasharray="4 4"/>
+          <path d="M-9 -2 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 c0 6 -9 11 -9 11 s-9 -5 -9 -11z" fill="#2c4c94" opacity=".55" id="chestHeart"/></g>
+        </g>
+      </svg>
+      <span class="guide" id="guide"></span>
+    </button>
+    <div class="tarzan" id="tarzan">
+      <div class="say" id="tSay"></div>
+      <svg viewBox="0 0 60 90" aria-hidden="true">
+        <ellipse cx="30" cy="86" rx="18" ry="3" fill="rgba(0,0,0,.25)"/>
+        <rect x="18" y="38" width="24" height="30" rx="8" fill="#9fb3dd"/>
+        <rect x="20" y="66" width="8" height="18" rx="3" fill="#24407a"/><rect x="32" y="66" width="8" height="18" rx="3" fill="#24407a"/>
+        <circle cx="30" cy="26" r="12" fill="#e2c3a6"/>
+        <path d="M17 22 q13 -16 26 0 v-4 q-13 -10 -26 0z" fill="#1d2433"/><rect x="15" y="18" width="30" height="5" rx="2" fill="#1d2433"/>
+        <circle cx="26" cy="27" r="1.6" fill="#1d2433" id="tEyeL"/><circle cx="34" cy="27" r="1.6" fill="#1d2433"/>
+        <path d="M26 33 q4 2 8 0" stroke="#1d2433" stroke-width="1.5" fill="none"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- chapter 4 intro -->
+<section class="scene" id="c4intro">
+  <div class="chap-no">الفصل 4</div>
+  <h2 class="chap-title">اليوم أو أبدًا</h2>
+  <div class="cal" aria-label="التقويم">
+    <div class="day x"><div class="mo">SEP</div><div class="dn">23</div><div class="nt">TODAY OR NEVER</div></div>
+    <div class="day circ"><div class="mo">SEP</div><div class="dn">19</div><div class="nt">5:15 PM</div></div>
+  </div>
+  <p class="chap-story">كنت كاتب بالتقويم إني بقولها يوم 23 سبتمبر…<br>بس قلبي ما قدر يصبر<br>المسي القلب مع كل نبضة… وخليه يوصل</p>
+  <button class="btn" id="c4start">خليني أحس فيه</button>
+</section>
+
+<!-- chapter 4 game -->
+<section class="scene" id="c4game">
+  <div class="clock4" id="clock4">4:52<small>PM</small></div>
+  <div class="date4">19 سبتمبر 2026</div>
+  <button id="heartBtn" aria-label="القلب">
+    <svg viewBox="0 0 200 190" aria-hidden="true">
+      <circle cx="100" cy="98" r="92" fill="none" stroke="rgba(223,232,251,.12)" stroke-width="2"/>
+      <circle id="ring4" cx="100" cy="98" r="92" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"
+        stroke-dasharray="578" stroke-dashoffset="578" transform="rotate(-90 100 98)"/>
+      <path id="heart4" d="M100 162 C40 120 22 88 34 62 C46 36 82 34 100 60 C118 34 154 36 166 62 C178 88 160 120 100 162Z" fill="#dfe8fb"/>
+    </svg>
+  </button>
+  <div class="bpm4"><span id="bpm4">78</span><small>BPM</small></div>
+  <div class="judge" id="judge"></div>
+  <div class="love" id="love"><span>أ</span><span>ح‍</span><span>‍ب‍</span><span>‍ك</span></div>
+  <div class="hint" id="hint4">المسي القلب لحظة ما ينبض</div>
+</section>
+
+<!-- chapter 5 intro -->
+<section class="scene" id="c5intro">
+  <div class="chap-no">الفصل 5</div>
+  <h2 class="chap-title">لغتنا</h2>
+  <div class="chap-date">كلمات ما يفهمها أحد غيرنا</div>
+  <p class="chap-story">صار لنا لغة خاصة… كلمات لو سمعها أحد ثاني ما راح يفهم شي<br>كملي الرسايل بالكلمة الصح</p>
+  <button class="btn" id="c5start">أعرفها كلها</button>
+</section>
+
+<!-- chapter 5 game -->
+<section class="scene" id="c5game">
+  <div class="c5top"><span class="ttl">لغتنا</span><div class="dots5" id="dots5"></div></div>
+  <div class="chat5" id="chat5" aria-live="polite"></div>
+  <div class="hint" id="hint5"></div>
+  <div class="opts" id="opts5"></div>
+</section>
+
+<!-- chapter 5 dictionary -->
+<section class="scene" id="c5done">
+  <div class="dict5" id="dict5"></div>
+  <button class="btn" id="c5finish">أخذ الحرف</button>
+</section>
+
+<!-- chapter 6 intro -->
+<section class="scene" id="c6intro">
+  <div class="chap-no">الفصل 6</div>
+  <h2 class="chap-title">سما نجد</h2>
+  <div class="chap-date">14 نوفمبر 2005 · 12 بالليل</div>
+  <p class="chap-story">هذي السما الحقيقية فوق نجد… الليلة اللي جيتي فيها للدنيا<br>محسوبة نجمة نجمة<br>دوري فيها على 4 أشياء كانت تستناك</p>
+  <button class="btn" id="c6start">طالعي فوق</button>
+</section>
+
+<!-- chapter 6 game -->
+<section class="scene" id="c6game">
+  <div class="stamp6">سماء نجد · 14 نوفمبر 2005 · منتصف الليل</div>
+  <div class="sky6" id="sky6"><svg id="skySvg6" viewBox="-1.13 -1.13 2.26 2.26" aria-label="sky map"><circle cx="0" cy="0" r="1" fill="none" stroke="rgba(255,255,255,.22)" stroke-width=".006"/><circle cx="0" cy="0" r="0.268" fill="none" stroke="rgba(255,255,255,.06)" stroke-width=".003" stroke-dasharray=".02 .02"/><circle cx="0" cy="0" r="0.577" fill="none" stroke="rgba(255,255,255,.06)" stroke-width=".003" stroke-dasharray=".02 .02"/><path class="sky-lines" d="M0.1572 -0.1734L0.2692 -0.1413M0.2692 -0.1413L0.3431 -0.1199M0.3431 -0.1199L0.4123 -0.1306M0.3306 -0.0384L0.349 -0.053M0.349 -0.053L0.3503 -0.1063M0.3503 -0.1063L0.3431 -0.1199M0.3431 -0.1199L0.337 -0.148M0.337 -0.148L0.3913 -0.2919M0.3913 -0.2919L0.4551 -0.3306M0.3913 -0.2919L0.3809 -0.2985M0.3809 -0.2985L0.3713 -0.32M0.2692 -0.1413L0.2827 -0.176M0.2827 -0.176L0.2848 -0.2042M0.2848 -0.2042L0.2293 -0.2456M0.2293 -0.2456L0.1817 -0.2418M0.3809 -0.2985L0.359 -0.3102M0.8999 0.0488L0.8484 0.0858M0.8484 0.0858L0.8165 0.0757M0.8165 0.0757L0.7948 0.0849M0.7948 0.0849L0.7652 0.2039M0.7652 0.2039L0.6853 0.2427M0.6853 0.2427L0.7328 0.4069M0.8999 0.0488L0.8955 0.1751M0.8165 0.0757L0.8215 0.052M0.6861 0.3936L0.6853 0.2427M0.6853 0.2427L0.6233 0.3663M0.0952 -0.0267L0.185 -0.0044M0.185 -0.0044L0.2151 0.0148M0.2151 0.0148L0.2199 0.028M-0.2237 -0.2195L-0.1532 -0.2074M-0.1532 -0.2074L-0.1468 -0.1608M-0.1468 -0.1608L-0.1436 -0.0859M-0.1436 -0.0859L-0.2072 -0.0562M-0.2072 -0.0562L-0.2488 -0.1503M-0.2488 -0.1503L-0.2237 -0.2195M-0.2237 -0.2195L-0.1895 -0.3034M-0.1895 -0.3034L-0.1532 -0.2074M-0.1532 -0.2074L-0.1343 -0.1824M-0.1343 -0.1824L-0.1403 -0.1579M-0.1192 0.6988L-0.1439 0.6601M-0.1439 0.6601L-0.15 0.6018M-0.15 0.6018L-0.205 0.5838M-0.1075 -0.2711L-0.0997 -0.3355M-0.0997 -0.3355L-0.0747 -0.3896M-0.0747 -0.3896L-0.0094 -0.4311M-0.0094 -0.4311L-0.0108 -0.3722M-0.0108 -0.3722L0.0119 -0.3177M-0.0747 -0.3896L-0.1386 -0.45M-0.1386 -0.45L-0.1127 -0.5362M-0.7756 -0.0924L-0.693 -0.1424M-0.693 -0.1424L-0.6659 -0.1761M-0.6659 -0.1761L-0.6181 -0.2564M-0.693 -0.1424L-0.6683 0.0002M-0.4089 0.3809L-0.4703 0.3631M-0.4703 0.3631L-0.5251 0.4488M-0.5251 0.4488L-0.5409 0.4824M-0.5409 0.4824L-0.5207 0.5025M-0.5207 0.5025L-0.5112 0.516M-0.5112 0.516L-0.403 0.5259M-0.5872 0.5238L-0.5409 0.4824M-0.4703 0.3631L-0.5019 0.3651M-0.5019 0.3651L-0.5227 0.3463M-0.5227 0.3463L-0.4912 0.3063M-0.4912 0.3063L-0.5019 0.3651M-0.5795 0.0839L-0.5359 0.0607M-0.4328 0.7078L-0.3694 0.8444M0.1126 -0.373L0.1566 -0.3535M0.1566 -0.3535L0.1869 -0.3742M0.1869 -0.3742L0.2271 -0.3482M0.2271 -0.3482L0.2475 -0.3952M0.3469 -0.6931L0.3617 -0.6672M0.3617 -0.6672L0.3438 -0.6174M0.3438 -0.6174L0.3791 -0.5652M0.3791 -0.5652L0.3762 -0.5088M0.3762 -0.5088L0.3671 -0.5216M0.3671 -0.5216L0.3503 -0.4976M0.3503 -0.4976L0.2574 -0.5221M0.2574 -0.5221L0.1231 -0.5594M0.1231 -0.5594L0.2408 -0.625M0.2408 -0.625L0.3438 -0.6174M0.2408 -0.625L0.2574 -0.5221M0.1262 0.1859L0.1416 0.1632M0.1416 0.1632L0.1569 0.1357M0.1569 0.1357L0.1184 0.1239M0.1184 0.1239L0.0864 0.1366M0.0864 0.1366L0.0827 0.1803M0.0827 0.1803L0.1262 0.1859M0.1262 0.1859L0.1365 0.2121M0.1365 0.2121L0.1857 0.2401M0.1857 0.2401L0.2583 0.3077M0.2583 0.3077L0.2799 0.3646M0.2799 0.3646L0.4411 0.3797M0.4411 0.3797L0.4991 0.2678M0.4991 0.2678L0.3674 0.2977M0.3674 0.2977L0.3257 0.2804M0.3257 0.2804L0.2583 0.3077M-0.4057 0.5691L-0.3216 0.5936M-0.3216 0.5936L-0.2939 0.5707M-0.2939 0.5707L-0.2716 0.5868M-0.3216 0.5936L-0.3339 0.6885M0.7655 -0.4443L0.7606 -0.5527M0.7606 -0.5527L0.6915 -0.6638M0.5094 -0.8289L0.4759 -0.8558M0.5988 -0.6313L0.6915 -0.6638M-0.0814 0.786L-0.1171 0.8403M-0.1799 0.885L-0.1171 0.8403M0.2584 -0.7918L0.1767 -0.8192M0.1767 -0.8192L0.1516 -0.9528M-0.1706 -0.9681L-0.2127 -0.8098M-0.2127 -0.8098L-0.2511 -0.7414M0.1767 -0.8192L0.1615 -0.8054M0.2584 -0.7918L0.239 -0.736M-0.2091 0.2588L-0.1548 0.2447M-0.1548 0.2447L-0.1333 0.2467M-0.1333 0.2467L-0.077 0.2816M-0.077 0.2816L-0.0453 0.3463M-0.0453 0.3463L-0.0169 0.3328M-0.0169 0.3328L-0.01 0.3103M-0.01 0.3103L0.0143 0.3073M0.0143 0.3073L0.1004 0.3007M0.1004 0.3007L0.1311 0.3483M0.1311 0.3483L0.1296 0.3959M0.1296 0.3959L0.0881 0.4487M0.0881 0.4487L0.0468 0.4293M0.0468 0.4293L0.0125 0.428M0.0125 0.428L-0.0189 0.4448M-0.0189 0.4448L-0.1361 0.5246M-0.1361 0.5246L-0.1076 0.5637M-0.1076 0.5637L-0.0929 0.5609M-0.0929 0.5609L-0.0248 0.5881M-0.0248 0.5881L0.0044 0.6369M0.0044 0.6369L0.0441 0.6721M0.0441 0.6721L0.0955 0.6387M0.0955 0.6387L0.1374 0.6345M0.1374 0.6345L0.1635 0.7385M0.1635 0.7385L0.1824 0.7942M0.1824 0.7942L0.2286 0.8013M0.2286 0.8013L0.2547 0.8941M0.0646 0.5064L0.1196 0.5453M0.1196 0.5453L0.2297 0.5118M-0.3206 -0.0262L-0.3379 -0.0314M-0.3379 -0.0314L-0.3744 -0.071M-0.3744 -0.071L-0.4103 -0.1429M-0.4103 -0.1429L-0.449 -0.1831M-0.449 -0.1831L-0.492 -0.1592M-0.492 -0.1592L-0.4779 -0.1373M-0.4779 -0.1373L-0.4658 -0.0729M-0.4658 -0.0729L-0.4351 -0.0443M-0.4351 -0.0443L-0.3882 0.0165M-0.3882 0.0165L-0.416 0.0455M-0.4658 -0.0729L-0.483 -0.0169M-0.0814 0.6631L0.125 0.7789M0.125 0.7789L0.1345 0.8047M0.1345 0.8047L0.1249 0.8335M0.1249 0.8335L0.071 0.9098M0.071 0.9098L0.0752 0.9821M-0.774 -0.0062L-0.7827 -0.0011M-0.7827 -0.0011L-0.7793 0.0376M-0.7793 0.0376L-0.7651 0.044M-0.7651 0.044L-0.7494 0.0154M-0.7494 0.0154L-0.774 -0.0062M-0.774 -0.0062L-0.8044 -0.0127M-0.8044 -0.0127L-0.8916 0.0073M0.4179 -0.4649L0.4284 -0.4393M0.4284 -0.4393L0.4551 -0.423M0.4551 -0.423L0.4772 -0.4282M0.4772 -0.4282L0.4964 -0.3857M0.4964 -0.3857L0.4714 -0.3789M0.4714 -0.3789L0.4551 -0.423M0.4551 -0.423L0.4441 -0.4441M0.4441 -0.4441L0.4179 -0.4649M0.4964 -0.3857L0.5537 -0.3872M0.5537 -0.3872L0.5691 -0.3668M-0.8792 -0.4116L-0.7909 -0.3711M-0.7909 -0.3711L-0.7998 -0.3302M-0.7051 -0.4928L-0.754 -0.5337M-0.7151 -0.5603L-0.7051 -0.4928M-0.7051 -0.4928L-0.637 -0.4211M-0.3628 0.3496L-0.3367 0.3428M-0.3367 0.3428L-0.3127 0.3512M-0.3127 0.3512L-0.2777 0.3847M-0.2777 0.3847L-0.2273 0.3693M-0.2273 0.3693L-0.2101 0.4348M-0.2101 0.4348L-0.2671 0.4166M-0.2671 0.4166L-0.3089 0.4346M-0.3089 0.4346L-0.3265 0.4168M-0.2268 0.3358L-0.2273 0.3693M-0.2273 0.3693L-0.2426 0.3375M-0.1935 -0.358L-0.2395 -0.3796M-0.2395 -0.3796L-0.3337 -0.3284M-0.3337 -0.3284L-0.4588 -0.3477M-0.4588 -0.3477L-0.5284 -0.3977M-0.5284 -0.3977L-0.6069 -0.3917M-0.6069 -0.3917L-0.6354 -0.3755M-0.6265 0.2578L-0.6949 0.1566M-0.6949 0.1566L-0.52 0.1676M-0.52 0.1676L-0.4151 0.2586M-0.4151 0.2586L-0.3774 0.255M-0.52 0.1676L-0.4488 0.1502M-0.4488 0.1502L-0.3828 0.1404M-0.3828 0.1404L-0.3998 0.1083M-0.3998 0.1083L-0.4135 0.078M-0.3232 0.0502L-0.282 0.0059M-0.282 0.0059L-0.3029 0.0021M-0.3029 0.0021L-0.3344 0.0531M-0.3344 0.0531L-0.3215 0.1013M-0.3215 0.1013L-0.3084 0.1258M-0.3084 0.1258L-0.2395 0.1463M-0.2395 0.1463L-0.1668 0.1194M-0.1822 0.196L-0.1717 0.19M-0.1717 0.19L-0.1623 0.1615M-0.1623 0.1615L-0.1581 0.1494M-0.1581 0.1494L-0.1583 0.1316M-0.1583 0.1316L-0.1668 0.1194M-0.1668 0.1194L-0.1668 0.0887M-0.1668 0.0887L-0.1826 0.0696M-0.1826 0.0696L-0.1934 0.0663M-0.2274 0.2882L-0.2471 0.2296M-0.2471 0.2296L-0.2633 0.2075M-0.2633 0.2075L-0.2395 0.1463M-0.2395 0.1463L-0.2578 0.1096M-0.2578 0.1096L-0.3084 0.1258M-0.3084 0.1258L-0.2863 0.2211M-0.2863 0.2211L-0.3112 0.2971M-0.2863 0.2211L-0.2744 0.2151M-0.2744 0.2151L-0.2633 0.2075M0.6229 -0.338L0.5821 -0.2507M0.5821 -0.2507L0.5533 -0.1979M0.5533 -0.1979L0.4123 -0.1306M0.4123 -0.1306L0.4557 0.0082M0.4557 0.0082L0.6281 -0.0635M0.6281 -0.0635L0.6944 -0.0539M0.6944 -0.0539L0.7173 -0.0456M0.7173 -0.0456L0.8435 -0.0357M0.8435 -0.0357L0.902 -0.1341M0.6281 -0.0635L0.5533 -0.1979M0.5533 -0.1979L0.6073 -0.1839M0.6073 -0.1839L0.6225 -0.1788M0.6225 -0.1788L0.7013 -0.268M0.7013 -0.268L0.7503 -0.3196M-0.0099 -0.0663L-0.0282 -0.0631M-0.0282 -0.0631L-0.0357 -0.0978M-0.0357 -0.0978L-0.0321 -0.135M-0.0321 -0.135L-0.0102 -0.1573M-0.0102 -0.1573L-0.006 -0.2042M-0.006 -0.2042L0.0038 -0.2078M0.0038 -0.2078L0.0217 -0.2235M0.0217 -0.2235L0.0473 -0.259M0.0473 -0.259L0.0636 -0.2836M0.0636 -0.2836L0.0627 -0.2537M0.0627 -0.2537L0.0444 -0.2226M0.0444 -0.2226L0.0471 -0.1794M0.0471 -0.1794L0.0518 -0.1446M0.0518 -0.1446L0.0474 -0.1323M0.0474 -0.1323L0.0584 -0.1262M0.0584 -0.1262L0.0688 -0.1345M0.0688 -0.1345L0.0661 -0.1465M0.0661 -0.1465L0.0518 -0.1446M-0.0404 -0.2291L-0.0543 -0.2124M-0.0543 -0.2124L-0.0454 -0.2052M-0.0454 -0.2052L-0.006 -0.2042M0.0444 -0.2226L0.0817 -0.2233M0.0817 -0.2233L0.1672 -0.2576M0.4724 0.7009L0.358 0.7482M0.358 0.7482L0.3092 0.6926M0.3092 0.6926L0.2914 0.7726M0.2914 0.7726L0.3265 0.8767M0.3265 0.8767L0.358 0.7482M0.358 0.7482L0.5084 0.7621M0.5084 0.7621L0.4724 0.7009M-0.279 0.8814L-0.288 0.8021M0.2927 -0.0389L0.2821 -0.0902M0.2821 -0.0902L0.2742 -0.06M0.2742 -0.06L0.2927 -0.0389M0.2927 -0.0389L0.3064 -0.0076M0.3064 -0.0076L0.2746 0.055M0.2746 0.055L0.2531 0.1178M0.2531 0.1178L0.2219 0.1824M0.2219 0.1824L0.2415 0.1762M0.2415 0.1762L0.2673 0.1509M0.2673 0.1509L0.2929 0.1407M0.2929 0.1407L0.3297 0.1203M0.3297 0.1203L0.355 0.1122M0.355 0.1122L0.3903 0.1078M0.3903 0.1078L0.5181 0.0829M0.5181 0.0829L0.5746 0.0805M0.5746 0.0805L0.6053 0.0612M0.6053 0.0612L0.6309 0.0652M0.6309 0.0652L0.6484 0.0867M0.6484 0.0867L0.6268 0.1194M0.6268 0.1194L0.5813 0.1256M0.5813 0.1256L0.5638 0.1097M0.5638 0.1097L0.5746 0.0805M0.6484 0.0867L0.686 0.0667M0.8377 0.4995L0.7729 0.5394M0.7729 0.5394L0.7747 0.5886M0.7747 0.5886L0.7862 0.5957M-0.4328 0.7078L-0.5561 0.6347M-0.5561 0.6347L-0.623 0.5121M-0.623 0.5121L-0.6347 0.4899M-0.6347 0.4899L-0.669 0.4624M-0.669 0.4624L-0.6938 0.4333M-0.6938 0.4333L-0.7305 0.454M-0.7305 0.454L-0.6919 0.7046M-0.669 0.4624L-0.6649 0.478M-0.6649 0.478L-0.6496 0.5218M-0.6496 0.5218L-0.623 0.5121M-0.0682 0.9544L-0.0757 0.9031M-0.0757 0.9031L-0.0387 0.9351M-0.0387 0.9351L-0.0096 0.9917M-0.0096 0.9917L-0.0682 0.9544M0.4008 0.517L0.6033 0.5079M0.6033 0.5079L0.6959 0.5802M0.6959 0.5802L0.6393 0.658M-0.2446 0.0059L-0.1201 0.0664M-0.1201 0.0664L-0.1051 0.0733M-0.1051 0.0733L-0.0864 0.0768M-0.0864 0.0768L-0.0919 0.0595M-0.0919 0.0595L-0.1027 0.0441M-0.1027 0.0441L-0.2072 -0.0562M-0.0864 0.0768L-0.0468 0.1064M-0.0468 0.1064L0.0259 0.1313M0.0259 0.1313L-0.0539 0.1641M0.0259 0.1313L0.0311 0.1375M0.0311 0.1375L0.0048 0.2154M0.2026 -0.0643L0.1617 -0.1059M0.1617 -0.1059L0.1494 -0.0931M0.1494 -0.0931L0.2026 -0.0643M-0.4064 -0.8717L-0.3639 -0.7187M-0.3639 -0.7187L-0.4425 -0.7164M-0.4425 -0.7164L-0.4743 -0.8373M-0.4743 -0.8373L-0.4064 -0.8717M-0.6308 -0.7204L-0.6401 -0.575M-0.6308 -0.7204L-0.6149 -0.5698M-0.3639 -0.7187L-0.3267 -0.5798M-0.3267 -0.5798L-0.3124 -0.4893M-0.3124 -0.4893L-0.3851 -0.5923M-0.3851 -0.5923L-0.4425 -0.7164M-0.4425 -0.7164L-0.4479 -0.573M-0.4479 -0.573L-0.4615 -0.5255M-0.4615 -0.5255L-0.4651 -0.443M-0.4794 -0.4441L-0.4615 -0.5255M0.0038 -0.8024L0.0347 -0.8287M0.0347 -0.8287L-0.0223 -0.8907M-0.0223 -0.8907L-0.0492 -0.8498M-0.0492 -0.8498L0.0038 -0.8024M0.0038 -0.8024L0.0309 -0.7384M0.0309 -0.7384L0.0206 -0.678M0.0206 -0.678L0.0026 -0.6319" stroke="rgba(159,179,221,.45)" stroke-width=".0035" fill="none"/><g class="sky-stars" fill="#fff"><circle cx="0.544" cy="0.2278" r="0.0051"/><circle cx="0.5553" cy="0.3649" r="0.0047"/><circle cx="0.5446" cy="0.2817" r="0.0035"/><circle cx="0.5337" cy="0.226" r="0.0045"/><circle cx="0.4123" cy="-0.1306" r="0.0111"/><circle cx="0.2475" cy="-0.3952" r="0.0106"/><circle cx="0.5084" cy="0.7621" r="0.0064"/><circle cx="0.5312" cy="0.3436" r="0.0038"/><circle cx="0.4557" cy="0.0082" r="0.0091"/><circle cx="0.4348" cy="-0.0401" r="0.004"/><circle cx="0.5242" cy="0.3868" r="0.005"/><circle cx="0.3516" cy="-0.2102" r="0.0045"/><circle cx="0.3583" cy="-0.192" r="0.0048"/><circle cx="0.4991" cy="0.2678" r="0.0072"/><circle cx="0.4691" cy="0.7213" r="0.0063"/><circle cx="0.4724" cy="0.7009" r="0.0103"/><circle cx="0.4835" cy="0.5688" r="0.0039"/><circle cx="0.4394" cy="0.7966" r="0.0041"/><circle cx="0.2487" cy="-0.3372" r="0.0042"/><circle cx="0.1992" cy="-0.4092" r="0.0057"/><circle cx="0.337" cy="-0.148" r="0.0052"/><circle cx="0.2454" cy="-0.3277" r="0.0069"/><circle cx="0.3503" cy="-0.1063" r="0.0052"/><circle cx="0.3431" cy="-0.1199" r="0.008"/><circle cx="0.2271" cy="-0.3482" r="0.0107"/><circle cx="0.4225" cy="0.7499" r="0.0046"/><circle cx="0.2554" cy="-0.294" r="0.004"/><circle cx="0.2697" cy="-0.2621" r="0.0036"/><circle cx="0.4411" cy="0.3797" r="0.0112"/><circle cx="0.4329" cy="0.296" r="0.0041"/><circle cx="0.2621" cy="-0.2723" r="0.0049"/><circle cx="0.349" cy="-0.053" r="0.0059"/><circle cx="0.3903" cy="0.1078" r="0.005"/><circle cx="0.2438" cy="-0.293" r="0.0038"/><circle cx="0.2102" cy="-0.3534" r="0.0075"/><circle cx="0.2848" cy="-0.2042" r="0.0047"/><circle cx="0.3962" cy="0.1981" r="0.0041"/><circle cx="0.1887" cy="-0.3801" r="0.004"/><circle cx="0.1976" cy="-0.3598" r="0.0039"/><circle cx="0.1946" cy="-0.3606" r="0.0045"/><circle cx="0.1869" cy="-0.3742" r="0.0109"/><circle cx="0.2827" cy="-0.176" r="0.0065"/><circle cx="0.3306" cy="-0.0384" r="0.0051"/><circle cx="0.4008" cy="0.517" r="0.0053"/><circle cx="0.355" cy="0.1122" r="0.0054"/><circle cx="0.358" cy="0.7482" r="0.0079"/><circle cx="0.3265" cy="0.8767" r="0.0063"/><circle cx="0.3674" cy="0.2977" r="0.0075"/><circle cx="0.0272" cy="-0.6043" r="0.0055"/><circle cx="0.2293" cy="-0.2456" r="0.0054"/><circle cx="0.2692" cy="-0.1413" r="0.0111"/><circle cx="0.1955" cy="-0.3155" r="0.0052"/><circle cx="0.3064" cy="-0.0076" r="0.0044"/><circle cx="0.2821" cy="-0.0902" r="0.0048"/><circle cx="0.2927" cy="-0.0389" r="0.0044"/><circle cx="0.338" cy="0.7276" r="0.0036"/><circle cx="0.2742" cy="-0.06" r="0.0042"/><circle cx="0.1715" cy="-0.3382" r="0.0036"/><circle cx="0.2156" cy="-0.2224" r="0.0038"/><circle cx="0.3257" cy="0.2804" r="0.0071"/><circle cx="0.3265" cy="0.348" r="0.0038"/><circle cx="0.1566" cy="-0.3535" r="0.0096"/><circle cx="0.1223" cy="-0.4266" r="0.0042"/><circle cx="0.2076" cy="-0.2183" r="0.0039"/><circle cx="0.3092" cy="0.6926" r="0.0076"/><circle cx="0.2929" cy="0.1407" r="0.0039"/><circle cx="0.2914" cy="0.7726" r="0.0063"/><circle cx="0.2746" cy="0.055" r="0.0071"/><circle cx="0.1512" cy="-0.3403" r="0.0043"/><circle cx="0.2046" cy="-0.1775" r="0.0058"/><circle cx="0.2547" cy="0.8941" r="0.0153"/><circle cx="0.1817" cy="-0.2418" r="0.0072"/><circle cx="0.2004" cy="-0.1682" r="0.0036"/><circle cx="0.2673" cy="0.1509" r="0.0049"/><circle cx="0.193" cy="-0.1858" r="0.0036"/><circle cx="0.2746" cy="0.2397" r="0.0036"/><circle cx="0.1672" cy="-0.2576" r="0.0061"/><circle cx="0.2799" cy="0.3646" r="0.0074"/><circle cx="0.2531" cy="0.1178" r="0.0054"/><circle cx="0.2632" cy="0.3109" r="0.0044"/><circle cx="0.2583" cy="0.3077" r="0.0068"/><circle cx="0.2026" cy="-0.0643" r="0.0076"/><circle cx="0.2199" cy="0.028" r="0.0064"/><circle cx="0.2415" cy="0.1762" r="0.0045"/><circle cx="0.2432" cy="0.7266" r="0.0051"/><circle cx="0.1126" cy="-0.373" r="0.0078"/><circle cx="0.2151" cy="0.0148" r="0.0096"/><circle cx="0.2286" cy="0.8013" r="0.0069"/><circle cx="0.0936" cy="-0.4205" r="0.0036"/><circle cx="0.2498" cy="0.4361" r="0.0037"/><circle cx="0.2332" cy="0.7407" r="0.004"/><circle cx="0.2037" cy="-0.0089" r="0.004"/><circle cx="0.1969" cy="0.9561" r="0.0091"/><circle cx="0.2412" cy="0.4205" r="0.0061"/><circle cx="0.0807" cy="-0.4404" r="0.0048"/><circle cx="0.2219" cy="0.1824" r="0.0066"/><circle cx="0.1306" cy="-0.2843" r="0.0035"/><circle cx="0.0742" cy="-0.455" r="0.0062"/><circle cx="0.1572" cy="-0.1734" r="0.011"/><circle cx="0.2297" cy="0.5118" r="0.0043"/><circle cx="0.185" cy="-0.0044" r="0.0113"/><circle cx="0.1583" cy="-0.1318" r="0.0041"/><circle cx="0.1767" cy="-0.0257" r="0.0036"/><circle cx="0.1617" cy="-0.1059" r="0.0087"/><circle cx="0.1642" cy="-0.0633" r="0.0037"/><circle cx="0.1906" cy="0.1288" r="0.0052"/><circle cx="0.138" cy="-0.187" r="0.0039"/><circle cx="0.1824" cy="0.7942" r="0.0072"/><circle cx="0.1492" cy="-0.0965" r="0.0039"/><circle cx="0.1494" cy="-0.0931" r="0.006"/><circle cx="0.1074" cy="-0.2377" r="0.0042"/><circle cx="0.1746" cy="0.3314" r="0.0038"/><circle cx="0.1635" cy="0.7385" r="0.0055"/><circle cx="0.1569" cy="0.1357" r="0.0053"/><circle cx="0.0672" cy="-0.3988" r="0.0049"/><circle cx="0.0026" cy="-0.6319" r="0.0114"/><circle cx="0.1606" cy="0.3615" r="0.0042"/><circle cx="0.1573" cy="0.4988" r="0.0036"/><circle cx="0.1416" cy="0.1632" r="0.0038"/><circle cx="0.1365" cy="0.2121" r="0.0059"/><circle cx="0.1415" cy="0.3284" r="0.0039"/><circle cx="0.1377" cy="0.6729" r="0.0042"/><circle cx="0.1374" cy="0.6345" r="0.0058"/><circle cx="0.0964" cy="-0.1424" r="0.0037"/><circle cx="0.1262" cy="0.1859" r="0.0075"/><circle cx="0.1076" cy="-0.0319" r="0.0044"/><circle cx="0.1311" cy="0.3483" r="0.0055"/><circle cx="0.0817" cy="-0.2233" r="0.0058"/><circle cx="0.1184" cy="0.1239" r="0.0054"/><circle cx="0.1296" cy="0.3959" r="0.0049"/><circle cx="0.0975" cy="-0.0445" r="0.0047"/><circle cx="0.1196" cy="0.5453" r="0.0049"/><circle cx="0.0952" cy="-0.0267" r="0.0071"/><circle cx="0.0841" cy="-0.124" r="0.0055"/><circle cx="0.0636" cy="-0.2836" r="0.0067"/><circle cx="0.1154" cy="0.4211" r="0.0041"/><circle cx="0.0856" cy="-0.095" r="0.0046"/><circle cx="0.0627" cy="-0.2537" r="0.0063"/><circle cx="0.1004" cy="0.3007" r="0.0064"/><circle cx="0.0955" cy="0.6387" r="0.009"/><circle cx="0.0688" cy="-0.1345" r="0.0043"/><circle cx="0.0752" cy="0.9821" r="0.0036"/><circle cx="0.0718" cy="-0.0948" r="0.0037"/><circle cx="0.081" cy="0.0267" r="0.0045"/><circle cx="0.0864" cy="0.1366" r="0.0043"/><circle cx="0.0827" cy="0.1803" r="0.0099"/><circle cx="0.0881" cy="0.4487" r="0.0059"/><circle cx="0.0473" cy="-0.259" r="0.0089"/><circle cx="0.0584" cy="-0.1262" r="0.0079"/><circle cx="0.0433" cy="-0.2888" r="0.0041"/><circle cx="0.0518" cy="-0.1446" r="0.0111"/><circle cx="0.0444" cy="-0.2226" r="0.006"/><circle cx="0.0471" cy="-0.1794" r="0.0066"/><circle cx="0.0474" cy="-0.1323" r="0.0045"/><circle cx="0.0563" cy="0.0423" r="0.0052"/><circle cx="0.0193" cy="-0.4639" r="0.0039"/><circle cx="0.0646" cy="0.5064" r="0.0066"/><circle cx="0.0491" cy="0.031" r="0.0038"/><circle cx="0.0545" cy="0.3009" r="0.004"/><circle cx="0.0495" cy="0.4371" r="0.0039"/><circle cx="0.0368" cy="-0.084" r="0.0039"/><circle cx="0.0443" cy="0.188" r="0.0039"/><circle cx="0.0468" cy="0.4293" r="0.0069"/><circle cx="0.0441" cy="0.6721" r="0.0054"/><circle cx="0.0195" cy="-0.3739" r="0.0042"/><circle cx="0.0356" cy="-0.0385" r="0.0049"/><circle cx="0.0286" cy="-0.1645" r="0.0036"/><circle cx="0.0217" cy="-0.2235" r="0.0118"/><circle cx="0.0311" cy="0.1375" r="0.0071"/><circle cx="0.0259" cy="0.1313" r="0.0068"/><circle cx="0.0164" cy="-0.216" r="0.0035"/><circle cx="0.0119" cy="-0.3177" r="0.0056"/><circle cx="0.0143" cy="-0.22" r="0.0044"/><circle cx="0.0183" cy="0.96" r="0.0043"/><circle cx="0.0112" cy="-0.3075" r="0.0047"/><circle cx="0.0128" cy="-0.2062" r="0.0052"/><circle cx="0.0195" cy="0.2659" r="0.0042"/><circle cx="0.0174" cy="0.103" r="0.0057"/><circle cx="0.0143" cy="0.3073" r="0.0068"/><circle cx="0.0125" cy="0.428" r="0.0054"/><circle cx="0.0038" cy="-0.2078" r="0.0053"/><circle cx="0.0048" cy="0.2154" r="0.0053"/><circle cx="0.0044" cy="0.6369" r="0.0046"/><circle cx="-0.0078" cy="0.539" r="0.0035"/><circle cx="-0.0062" cy="-0.0809" r="0.0036"/><circle cx="-0.0091" cy="0.6012" r="0.0046"/><circle cx="-0.006" cy="-0.2042" r="0.0087"/><circle cx="-0.01" cy="0.3103" r="0.0073"/><circle cx="-0.0096" cy="0.9917" r="0.0065"/><circle cx="-0.0099" cy="-0.0663" r="0.0065"/><circle cx="-0.0117" cy="0.0052" r="0.0068"/><circle cx="-0.0102" cy="-0.1573" r="0.0067"/><circle cx="-0.0123" cy="0.0021" r="0.0053"/><circle cx="-0.0136" cy="0.0029" r="0.0064"/><circle cx="-0.0077" cy="-0.3506" r="0.0041"/><circle cx="-0.0169" cy="0.3328" r="0.005"/><circle cx="-0.0146" cy="0.0066" r="0.0057"/><circle cx="-0.0189" cy="0.4448" r="0.0055"/><circle cx="-0.0169" cy="0.0052" r="0.0091"/><circle cx="-0.0227" cy="0.6049" r="0.0053"/><circle cx="-0.0203" cy="0.0056" r="0.0071"/><circle cx="-0.0248" cy="0.5881" r="0.0057"/><circle cx="-0.0108" cy="-0.3722" r="0.0051"/><circle cx="-0.0094" cy="-0.4311" r="0.0046"/><circle cx="-0.0354" cy="0.4592" r="0.0044"/><circle cx="-0.0282" cy="-0.0631" r="0.0091"/><circle cx="-0.0354" cy="0.246" r="0.0049"/><circle cx="-0.0212" cy="-0.3293" r="0.0035"/><circle cx="-0.0204" cy="-0.3484" r="0.0036"/><circle cx="-0.0321" cy="-0.135" r="0.009"/><circle cx="-0.0453" cy="0.3463" r="0.0088"/><circle cx="-0.0387" cy="0.9351" r="0.0046"/><circle cx="-0.0357" cy="-0.0978" r="0.0062"/><circle cx="-0.0503" cy="0.4529" r="0.0045"/><circle cx="-0.0468" cy="0.1064" r="0.0076"/><circle cx="-0.0423" cy="0.9478" r="0.0049"/><circle cx="-0.0439" cy="0.93" r="0.0036"/><circle cx="-0.0539" cy="0.1641" r="0.0063"/><circle cx="-0.0312" cy="-0.3112" r="0.0035"/><circle cx="-0.052" cy="0.0218" r="0.0052"/><circle cx="-0.0404" cy="-0.2291" r="0.0055"/><circle cx="-0.0454" cy="-0.2052" r="0.0062"/><circle cx="-0.0741" cy="0.6591" r="0.0037"/><circle cx="-0.077" cy="0.2816" r="0.006"/><circle cx="-0.0767" cy="0.1339" r="0.0039"/><circle cx="-0.0814" cy="0.6631" r="0.0065"/><circle cx="-0.0837" cy="0.3142" r="0.0038"/><circle cx="-0.0682" cy="0.9544" r="0.0078"/><circle cx="-0.0607" cy="-0.1411" r="0.0044"/><circle cx="-0.0543" cy="-0.2124" r="0.0058"/><circle cx="-0.0852" cy="0.2892" r="0.005"/><circle cx="-0.0804" cy="0.1371" r="0.0054"/><circle cx="-0.0814" cy="0.786" r="0.0054"/><circle cx="-0.0757" cy="0.9031" r="0.005"/><circle cx="-0.0784" cy="0.0336" r="0.0037"/><circle cx="-0.0929" cy="0.5609" r="0.0073"/><circle cx="-0.0575" cy="-0.2301" r="0.0045"/><circle cx="-0.0864" cy="0.0768" r="0.007"/><circle cx="-0.0803" cy="-0.0262" r="0.0036"/><circle cx="-0.075" cy="-0.0896" r="0.0037"/><circle cx="-0.0663" cy="-0.1961" r="0.004"/><circle cx="-0.0919" cy="0.0595" r="0.0067"/><circle cx="-0.1076" cy="0.5637" r="0.0062"/><circle cx="-0.0944" cy="0.0602" r="0.004"/><circle cx="-0.0938" cy="0.0173" r="0.0056"/><circle cx="-0.0971" cy="0.0557" r="0.0053"/><circle cx="-0.0954" cy="0.0126" r="0.0054"/><circle cx="-0.1004" cy="0.0759" r="0.0049"/><circle cx="-0.1015" cy="0.0839" r="0.0043"/><circle cx="-0.1043" cy="0.0691" r="0.0036"/><circle cx="-0.1049" cy="0.0725" r="0.0065"/><circle cx="-0.1027" cy="0.0441" r="0.0073"/><circle cx="-0.1051" cy="0.0733" r="0.0077"/><circle cx="-0.1089" cy="0.0702" r="0.0041"/><circle cx="-0.1214" cy="0.2164" r="0.0037"/><circle cx="-0.1312" cy="0.5156" r="0.0048"/><circle cx="-0.1169" cy="0.0816" r="0.0044"/><circle cx="-0.1171" cy="0.8403" r="0.0079"/><circle cx="-0.1361" cy="0.5246" r="0.0066"/><circle cx="-0.1241" cy="0.123" r="0.0055"/><circle cx="-0.1201" cy="0.0664" r="0.0142"/><circle cx="-0.1333" cy="0.2467" r="0.0063"/><circle cx="-0.0967" cy="-0.1522" r="0.0055"/><circle cx="-0.1279" cy="0.1016" r="0.0054"/><circle cx="-0.1416" cy="0.3525" r="0.0065"/><circle cx="-0.1427" cy="0.3308" r="0.0035"/><circle cx="-0.1277" cy="0.071" r="0.0044"/><circle cx="-0.1481" cy="0.407" r="0.0053"/><circle cx="-0.1439" cy="0.6601" r="0.005"/><circle cx="-0.1275" cy="0.0082" r="0.0054"/><circle cx="-0.1548" cy="0.2447" r="0.0061"/><circle cx="-0.1581" cy="0.1494" r="0.0082"/><circle cx="-0.1245" cy="-0.122" r="0.0038"/><circle cx="-0.1583" cy="0.1316" r="0.0052"/><circle cx="-0.1623" cy="0.1615" r="0.0069"/><circle cx="-0.1577" cy="0.083" r="0.0043"/><circle cx="-0.1305" cy="-0.1159" r="0.004"/><circle cx="-0.1735" cy="0.2646" r="0.0052"/><circle cx="-0.0747" cy="-0.3896" r="0.0054"/><circle cx="-0.1717" cy="0.19" r="0.0069"/><circle cx="-0.1668" cy="0.1194" r="0.0044"/><circle cx="-0.1668" cy="0.0887" r="0.0059"/><circle cx="-0.1436" cy="-0.0859" r="0.0095"/><circle cx="-0.1075" cy="-0.2711" r="0.005"/><circle cx="-0.1822" cy="0.196" r="0.0049"/><circle cx="-0.1403" cy="-0.1285" r="0.0037"/><circle cx="-0.1939" cy="0.3332" r="0.0041"/><circle cx="-0.1997" cy="0.4102" r="0.0037"/><circle cx="-0.195" cy="0.2801" r="0.004"/><circle cx="-0.1343" cy="-0.1824" r="0.0086"/><circle cx="-0.1403" cy="-0.1579" r="0.0069"/><circle cx="-0.1718" cy="0.0147" r="0.0045"/><circle cx="-0.0997" cy="-0.3355" r="0.006"/><circle cx="-0.205" cy="0.5838" r="0.0047"/><circle cx="-0.1826" cy="0.0696" r="0.0044"/><circle cx="-0.2101" cy="0.4348" r="0.0082"/><circle cx="-0.1799" cy="0.885" r="0.0043"/><circle cx="-0.1468" cy="-0.1608" r="0.0082"/><circle cx="-0.1253" cy="-0.2544" r="0.0036"/><circle cx="-0.1847" cy="0.0397" r="0.0037"/><circle cx="-0.2091" cy="0.2588" r="0.0093"/><circle cx="-0.2146" cy="0.2945" r="0.0055"/><circle cx="-0.1934" cy="0.0663" r="0.004"/><circle cx="-0.224" cy="0.3251" r="0.0049"/><circle cx="-0.2273" cy="0.3693" r="0.0079"/><circle cx="-0.2268" cy="0.3358" r="0.0052"/><circle cx="-0.2156" cy="0.1821" r="0.0049"/><circle cx="-0.164" cy="-0.1388" r="0.004"/><circle cx="-0.2274" cy="0.2882" r="0.016"/><circle cx="-0.1532" cy="-0.2074" r="0.0163"/><circle cx="-0.2376" cy="0.5781" r="0.004"/><circle cx="-0.234" cy="0.2743" r="0.0072"/><circle cx="-0.1825" cy="-0.0952" r="0.0047"/><circle cx="-0.1705" cy="-0.1555" r="0.0043"/><circle cx="-0.2045" cy="0.0048" r="0.0036"/><circle cx="-0.2426" cy="0.3375" r="0.0053"/><circle cx="-0.2474" cy="0.4222" r="0.0043"/><circle cx="-0.2388" cy="0.2108" r="0.0042"/><circle cx="-0.2373" cy="0.1733" r="0.0035"/><circle cx="-0.2502" cy="0.2827" r="0.0058"/><circle cx="-0.2228" cy="0.0453" r="0.0035"/><circle cx="-0.2471" cy="0.2296" r="0.0078"/><circle cx="-0.2436" cy="0.1888" r="0.0038"/><circle cx="-0.2395" cy="0.1463" r="0.0122"/><circle cx="-0.2072" cy="-0.0562" r="0.0122"/><circle cx="-0.2472" cy="0.1764" r="0.0046"/><circle cx="-0.2222" cy="0.003" r="0.0038"/><circle cx="-0.2671" cy="0.4166" r="0.0092"/><circle cx="-0.2586" cy="0.2157" r="0.0043"/><circle cx="-0.2531" cy="0.1484" r="0.0056"/><circle cx="-0.2716" cy="0.5868" r="0.0065"/><circle cx="-0.2696" cy="0.2762" r="0.0045"/><circle cx="-0.2633" cy="0.2075" r="0.0107"/><circle cx="-0.2376" cy="0.0313" r="0.0053"/><circle cx="-0.2122" cy="-0.091" r="0.0043"/><circle cx="-0.2777" cy="0.3847" r="0.0098"/><circle cx="-0.2577" cy="0.1139" r="0.0051"/><circle cx="-0.2762" cy="0.2626" r="0.0041"/><circle cx="-0.2578" cy="0.1096" r="0.0077"/><circle cx="-0.2762" cy="0.2564" r="0.0036"/><circle cx="-0.2765" cy="0.2567" r="0.0036"/><circle cx="-0.276" cy="0.251" r="0.0046"/><circle cx="-0.2771" cy="0.2616" r="0.0094"/><circle cx="-0.2744" cy="0.2151" r="0.0121"/><circle cx="-0.2628" cy="0.115" r="0.0059"/><circle cx="-0.2446" cy="0.0059" r="0.0088"/><circle cx="-0.2821" cy="0.2281" r="0.0067"/><circle cx="-0.2868" cy="0.2739" r="0.0041"/><circle cx="-0.2753" cy="0.163" r="0.0048"/><circle cx="-0.2939" cy="0.5707" r="0.0096"/><circle cx="-0.2863" cy="0.2211" r="0.012"/><circle cx="-0.2856" cy="0.2131" r="0.0036"/><circle cx="-0.2609" cy="0.0463" r="0.0039"/><circle cx="-0.2865" cy="0.1873" r="0.0038"/><circle cx="-0.3089" cy="0.4346" r="0.0072"/><circle cx="-0.3127" cy="0.3512" r="0.0073"/><circle cx="-0.288" cy="0.8021" r="0.0065"/><circle cx="-0.3112" cy="0.2971" r="0.0111"/><circle cx="-0.2613" cy="-0.0305" r="0.0038"/><circle cx="-0.2245" cy="-0.1619" r="0.0048"/><circle cx="-0.2863" cy="0.0787" r="0.0038"/><circle cx="-0.279" cy="0.8814" r="0.0048"/><circle cx="-0.3216" cy="0.5936" r="0.0084"/><circle cx="-0.2331" cy="-0.1461" r="0.0042"/><circle cx="-0.3265" cy="0.4168" r="0.0067"/><circle cx="-0.2286" cy="-0.1629" r="0.0062"/><circle cx="-0.3102" cy="0.1804" r="0.0041"/><circle cx="-0.3287" cy="0.5692" r="0.0038"/><circle cx="-0.2629" cy="-0.0603" r="0.0046"/><circle cx="-0.282" cy="0.0059" r="0.0051"/><circle cx="-0.1778" cy="-0.3136" r="0.0036"/><circle cx="-0.3084" cy="0.1258" r="0.0153"/><circle cx="-0.332" cy="0.6117" r="0.0036"/><circle cx="-0.3367" cy="0.3428" r="0.0069"/><circle cx="-0.339" cy="0.5886" r="0.0052"/><circle cx="-0.2764" cy="-0.0478" r="0.004"/><circle cx="-0.3339" cy="0.6885" r="0.0062"/><circle cx="-0.1895" cy="-0.3034" r="0.0068"/><circle cx="-0.2237" cy="-0.2195" r="0.0116"/><circle cx="-0.2488" cy="-0.1503" r="0.0096"/><circle cx="-0.2209" cy="-0.2286" r="0.0053"/><circle cx="-0.3356" cy="0.2267" r="0.0047"/><circle cx="-0.3481" cy="0.3038" r="0.0037"/><circle cx="-0.3215" cy="0.1013" r="0.0058"/><circle cx="-0.3029" cy="0.0021" r="0.0044"/><circle cx="-0.2958" cy="-0.0267" r="0.0057"/><circle cx="-0.3606" cy="0.3667" r="0.0037"/><circle cx="-0.3628" cy="0.3496" r="0.0044"/><circle cx="-0.3631" cy="0.616" r="0.0035"/><circle cx="-0.3232" cy="0.0502" r="0.005"/><circle cx="-0.3291" cy="0.8727" r="0.0042"/><circle cx="-0.3344" cy="0.0531" r="0.0049"/><circle cx="-0.3303" cy="0.0349" r="0.0036"/><circle cx="-0.3774" cy="0.255" r="0.0061"/><circle cx="-0.3206" cy="-0.0262" r="0.0079"/><circle cx="-0.3017" cy="-0.0906" r="0.0053"/><circle cx="-0.3873" cy="0.3346" r="0.0035"/><circle cx="-0.3892" cy="0.5903" r="0.0051"/><circle cx="-0.1386" cy="-0.45" r="0.0041"/><circle cx="-0.1935" cy="-0.358" r="0.005"/><circle cx="-0.3862" cy="0.2186" r="0.0037"/><circle cx="-0.403" cy="0.5259" r="0.0086"/><circle cx="-0.4057" cy="0.5691" r="0.0065"/><circle cx="-0.4089" cy="0.3809" r="0.0114"/><circle cx="-0.3379" cy="-0.0314" r="0.009"/><circle cx="-0.3828" cy="0.1404" r="0.0051"/><circle cx="-0.3694" cy="0.8444" r="0.0181"/><circle cx="-0.2453" cy="-0.275" r="0.0037"/><circle cx="-0.4228" cy="0.5591" r="0.0049"/><circle cx="-0.4151" cy="0.2586" r="0.0067"/><circle cx="-0.3575" cy="-0.0139" r="0.0058"/><circle cx="-0.436" cy="0.4445" r="0.0052"/><circle cx="-0.3998" cy="0.1083" r="0.0049"/><circle cx="-0.3947" cy="0.8553" r="0.0052"/><circle cx="-0.4448" cy="0.4389" r="0.0047"/><circle cx="-0.4481" cy="0.3943" r="0.0062"/><circle cx="-0.3882" cy="0.0165" r="0.0115"/><circle cx="-0.4328" cy="0.7078" r="0.0083"/><circle cx="-0.4509" cy="0.3822" r="0.005"/><circle cx="-0.4517" cy="0.3344" r="0.004"/><circle cx="-0.2975" cy="-0.2255" r="0.004"/><circle cx="-0.4135" cy="0.078" r="0.0044"/><circle cx="-0.3744" cy="-0.071" r="0.0085"/><circle cx="-0.4119" cy="0.0431" r="0.0048"/><circle cx="-0.4703" cy="0.3631" r="0.0202"/><circle cx="-0.416" cy="0.0455" r="0.0078"/><circle cx="-0.2212" cy="-0.3799" r="0.0039"/><circle cx="-0.434" cy="0.0927" r="0.0041"/><circle cx="-0.4488" cy="0.1502" r="0.0049"/><circle cx="-0.4833" cy="0.562" r="0.0074"/><circle cx="-0.4277" cy="0.8756" r="0.005"/><circle cx="-0.4411" cy="0.8271" r="0.0089"/><circle cx="-0.3196" cy="-0.2288" r="0.0035"/><circle cx="-0.4843" cy="0.5875" r="0.0035"/><circle cx="-0.3581" cy="-0.1601" r="0.0071"/><circle cx="-0.4964" cy="0.4041" r="0.004"/><circle cx="-0.4992" cy="0.4535" r="0.0064"/><circle cx="-0.4912" cy="0.3063" r="0.0059"/><circle cx="-0.4377" cy="0.036" r="0.0042"/><circle cx="-0.5024" cy="0.4028" r="0.0044"/><circle cx="-0.499" cy="0.3292" r="0.0035"/><circle cx="-0.5019" cy="0.3651" r="0.0052"/><circle cx="-0.4648" cy="0.8012" r="0.0037"/><circle cx="-0.2395" cy="-0.3796" r="0.0052"/><circle cx="-0.3144" cy="-0.2643" r="0.0038"/><circle cx="-0.5112" cy="0.516" r="0.0126"/><circle cx="-0.1127" cy="-0.5362" r="0.0047"/><circle cx="-0.5207" cy="0.5025" r="0.0074"/><circle cx="-0.5033" cy="0.2141" r="0.0035"/><circle cx="-0.5251" cy="0.4488" r="0.0086"/><circle cx="-0.5227" cy="0.3463" r="0.0058"/><circle cx="-0.4811" cy="0.8199" r="0.0037"/><circle cx="-0.4351" cy="-0.0443" r="0.0061"/><circle cx="-0.5409" cy="0.4824" r="0.0117"/><circle cx="-0.5266" cy="0.6692" r="0.0039"/><circle cx="-0.5238" cy="0.2104" r="0.0037"/><circle cx="-0.4103" cy="-0.1429" r="0.005"/><circle cx="-0.3672" cy="-0.2264" r="0.0037"/><circle cx="-0.52" cy="0.1676" r="0.0057"/><circle cx="-0.5156" cy="0.7806" r="0.0048"/><circle cx="-0.5232" cy="0.7561" r="0.0038"/><circle cx="-0.5259" cy="0.7478" r="0.005"/><circle cx="-0.5585" cy="0.4822" r="0.005"/><circle cx="-0.5151" cy="0.8063" r="0.0042"/><circle cx="-0.5601" cy="0.4879" r="0.0061"/><circle cx="-0.565" cy="0.5031" r="0.0044"/><circle cx="-0.5657" cy="0.4417" r="0.0039"/><circle cx="-0.5561" cy="0.6347" r="0.0095"/><circle cx="-0.483" cy="-0.0169" r="0.0072"/><circle cx="-0.5603" cy="0.6297" r="0.0044"/><circle cx="-0.3208" cy="-0.3223" r="0.0035"/><circle cx="-0.5721" cy="0.4582" r="0.0038"/><circle cx="-0.5722" cy="0.4635" r="0.0051"/><circle cx="-0.4658" cy="-0.0729" r="0.0074"/><circle cx="-0.5808" cy="0.3848" r="0.0037"/><circle cx="-0.5872" cy="0.5238" r="0.0101"/><circle cx="-0.5285" cy="0.0515" r="0.0035"/><circle cx="-0.4517" cy="-0.1348" r="0.0067"/><circle cx="-0.3337" cy="-0.3284" r="0.0045"/><circle cx="-0.5359" cy="0.0607" r="0.009"/><circle cx="-0.5364" cy="0.0531" r="0.0052"/><circle cx="-0.4387" cy="-0.176" r="0.0057"/><circle cx="-0.5751" cy="0.7362" r="0.0081"/><circle cx="-0.5294" cy="0.0189" r="0.0047"/><circle cx="-0.6064" cy="0.4371" r="0.0039"/><circle cx="-0.6063" cy="0.5488" r="0.0044"/><circle cx="-0.0758" cy="-0.5895" r="0.0037"/><circle cx="-0.6118" cy="0.324" r="0.004"/><circle cx="-0.6194" cy="0.4269" r="0.005"/><circle cx="-0.449" cy="-0.1831" r="0.0124"/><circle cx="-0.623" cy="0.5121" r="0.0044"/><circle cx="-0.4779" cy="-0.1373" r="0.0059"/><circle cx="-0.6215" cy="0.6103" r="0.0047"/><circle cx="-0.6333" cy="0.4694" r="0.0043"/><circle cx="-0.6347" cy="0.4899" r="0.0066"/><circle cx="-0.4428" cy="-0.2134" r="0.0038"/><circle cx="-0.5795" cy="0.0839" r="0.0155"/><circle cx="-0.6208" cy="0.6629" r="0.0039"/><circle cx="-0.6335" cy="0.3315" r="0.0036"/><circle cx="-0.6265" cy="0.2578" r="0.0063"/><circle cx="-0.2864" cy="-0.4231" r="0.0037"/><circle cx="-0.4831" cy="-0.165" r="0.0055"/><circle cx="-0.6491" cy="0.5138" r="0.0045"/><circle cx="-0.6496" cy="0.5218" r="0.0063"/><circle cx="-0.5094" cy="-0.1228" r="0.0072"/><circle cx="-0.6397" cy="0.6605" r="0.0071"/><circle cx="-0.492" cy="-0.1592" r="0.0135"/><circle cx="-0.5426" cy="-0.0655" r="0.0038"/><circle cx="-0.6649" cy="0.478" r="0.0051"/><circle cx="-0.669" cy="0.4624" r="0.0078"/><circle cx="-0.6537" cy="0.7067" r="0.0069"/><circle cx="-0.6605" cy="0.6789" r="0.0048"/><circle cx="-0.5166" cy="-0.1571" r="0.0036"/><circle cx="-0.6938" cy="0.4333" r="0.0056"/><circle cx="-0.6939" cy="0.5454" r="0.0041"/><circle cx="-0.6692" cy="0.1724" r="0.0037"/><circle cx="-0.7008" cy="0.3685" r="0.0045"/><circle cx="-0.6665" cy="0.1428" r="0.0043"/><circle cx="-0.6563" cy="0.0966" r="0.0051"/><circle cx="-0.5322" cy="-0.1802" r="0.0037"/><circle cx="-0.6919" cy="0.7046" r="0.0108"/><circle cx="-0.7305" cy="0.454" r="0.0091"/><circle cx="-0.3719" cy="-0.3954" r="0.0041"/><circle cx="-0.6949" cy="0.1566" r="0.0052"/><circle cx="-0.7329" cy="0.3784" r="0.0051"/><circle cx="-0.7308" cy="0.2873" r="0.0042"/><circle cx="-0.612" cy="-0.0886" r="0.0044"/><circle cx="-0.7432" cy="0.3269" r="0.0035"/><circle cx="-0.7373" cy="0.6413" r="0.0041"/><circle cx="-0.6683" cy="0.0002" r="0.0073"/><circle cx="-0.7526" cy="0.6571" r="0.005"/><circle cx="-0.7714" cy="0.597" r="0.0039"/><circle cx="-0.4588" cy="-0.3477" r="0.0055"/><circle cx="-0.7537" cy="0.1537" r="0.0063"/><circle cx="-0.3124" cy="-0.4893" r="0.0078"/><circle cx="-0.7494" cy="0.0154" r="0.0057"/><circle cx="-0.7651" cy="0.044" r="0.0049"/><circle cx="-0.8317" cy="0.2643" r="0.0036"/><circle cx="-0.2838" cy="-0.5233" r="0.0046"/><circle cx="-0.8461" cy="0.3169" r="0.0038"/><circle cx="-0.7793" cy="0.0376" r="0.0053"/><circle cx="-0.6659" cy="-0.1761" r="0.0044"/><circle cx="-0.8284" cy="0.1836" r="0.0045"/><circle cx="-0.693" cy="-0.1424" r="0.0063"/><circle cx="-0.8582" cy="0.2768" r="0.0053"/><circle cx="-0.6182" cy="-0.2564" r="0.006"/><circle cx="-0.774" cy="-0.0062" r="0.0077"/><circle cx="-0.7827" cy="-0.0011" r="0.0052"/><circle cx="-0.8044" cy="-0.0127" r="0.0084"/><circle cx="-0.7756" cy="-0.0924" r="0.0054"/><circle cx="-0.4651" cy="-0.443" r="0.0084"/><circle cx="-0.5284" cy="-0.3977" r="0.0062"/><circle cx="-0.2607" cy="-0.5653" r="0.0042"/><circle cx="-0.4794" cy="-0.4441" r="0.0072"/><circle cx="-0.8447" cy="-0.0179" r="0.0035"/><circle cx="-0.5699" cy="-0.3813" r="0.0046"/><circle cx="-0.4393" cy="-0.4837" r="0.0049"/><circle cx="-0.2698" cy="-0.5715" r="0.004"/><circle cx="-0.3109" cy="-0.5551" r="0.0044"/><circle cx="-0.8916" cy="0.0073" r="0.0064"/><circle cx="-0.4201" cy="-0.5108" r="0.004"/><circle cx="-0.6069" cy="-0.3917" r="0.0066"/><circle cx="-0.9801" cy="0.1835" r="0.004"/><circle cx="-0.6354" cy="-0.3755" r="0.0083"/><circle cx="-0.725" cy="-0.3054" r="0.0049"/><circle cx="-0.9795" cy="0.0607" r="0.0046"/><circle cx="-0.3267" cy="-0.5798" r="0.007"/><circle cx="-0.7735" cy="-0.2877" r="0.0053"/><circle cx="-0.8836" cy="-0.1491" r="0.0035"/><circle cx="-0.9806" cy="0.031" r="0.0047"/><circle cx="-0.4615" cy="-0.5255" r="0.0083"/><circle cx="-0.637" cy="-0.4211" r="0.0047"/><circle cx="-0.2465" cy="-0.6077" r="0.0047"/><circle cx="-0.4589" cy="-0.5312" r="0.0049"/><circle cx="-0.6023" cy="-0.4488" r="0.004"/><circle cx="-0.1066" cy="-0.6345" r="0.0054"/><circle cx="-0.9395" cy="-0.0993" r="0.0035"/><circle cx="-0.9621" cy="-0.0701" r="0.0043"/><circle cx="-0.9264" cy="-0.1504" r="0.0073"/><circle cx="-0.7998" cy="-0.3302" r="0.0088"/><circle cx="-0.3851" cy="-0.5923" r="0.0067"/><circle cx="-0.4479" cy="-0.573" r="0.0047"/><circle cx="-0.7909" cy="-0.3711" r="0.0064"/><circle cx="-0.9377" cy="-0.3073" r="0.0075"/><circle cx="-0.7051" cy="-0.4928" r="0.0048"/><circle cx="-0.8792" cy="-0.4116" r="0.0076"/><circle cx="-0.6149" cy="-0.5698" r="0.0075"/><circle cx="-0.6401" cy="-0.575" r="0.0085"/><circle cx="-0.3103" cy="-0.6586" r="0.0037"/><circle cx="-0.754" cy="-0.5337" r="0.0042"/><circle cx="-0.7151" cy="-0.5603" r="0.0056"/><circle cx="-0.4423" cy="-0.653" r="0.004"/><circle cx="-0.6673" cy="-0.5985" r="0.0042"/><circle cx="-0.1772" cy="-0.6702" r="0.0039"/><circle cx="-0.8013" cy="-0.5597" r="0.0043"/><circle cx="-0.6433" cy="-0.6706" r="0.0044"/><circle cx="-0.4425" cy="-0.7164" r="0.0104"/><circle cx="-0.3639" cy="-0.7187" r="0.0118"/><circle cx="-0.6308" cy="-0.7204" r="0.0087"/><circle cx="-0.2511" cy="-0.7414" r="0.0066"/><circle cx="-0.4743" cy="-0.8373" r="0.0102"/><circle cx="-0.4064" cy="-0.8717" r="0.0079"/><circle cx="-0.2127" cy="-0.8098" r="0.0065"/><circle cx="-0.2089" cy="-0.8092" r="0.0036"/><circle cx="-0.1871" cy="-0.9501" r="0.0046"/><circle cx="-0.1706" cy="-0.9681" r="0.007"/><circle cx="-0.0673" cy="-0.7906" r="0.004"/><circle cx="-0.0636" cy="-0.8213" r="0.0055"/><circle cx="-0.0492" cy="-0.8498" r="0.0111"/><circle cx="-0.072" cy="-0.9802" r="0.0045"/><circle cx="-0.0223" cy="-0.8907" r="0.0087"/><circle cx="-0.006" cy="-0.8088" r="0.0035"/><circle cx="0.0038" cy="-0.8024" r="0.0053"/><circle cx="0.0347" cy="-0.8287" r="0.0036"/><circle cx="0.0719" cy="-0.9312" r="0.0037"/><circle cx="0.1143" cy="-0.9915" r="0.0039"/><circle cx="0.0309" cy="-0.7384" r="0.0056"/><circle cx="0.1361" cy="-0.972" r="0.0038"/><circle cx="0.1516" cy="-0.9528" r="0.0083"/><circle cx="0.0206" cy="-0.678" r="0.0052"/><circle cx="0.1617" cy="-0.887" r="0.0041"/><circle cx="0.1352" cy="-0.8414" r="0.0046"/><circle cx="0.2525" cy="-0.8967" r="0.0035"/><circle cx="0.1767" cy="-0.8192" r="0.0055"/><circle cx="0.1615" cy="-0.8054" r="0.0073"/><circle cx="0.3402" cy="-0.9364" r="0.0036"/><circle cx="0.2504" cy="-0.8689" r="0.004"/><circle cx="0.3605" cy="-0.8796" r="0.0045"/><circle cx="0.2005" cy="-0.7877" r="0.004"/><circle cx="0.2584" cy="-0.7918" r="0.0085"/><circle cx="0.404" cy="-0.8441" r="0.0035"/><circle cx="0.186" cy="-0.7535" r="0.0049"/><circle cx="0.4759" cy="-0.8558" r="0.0066"/><circle cx="0.2897" cy="-0.7918" r="0.0045"/><circle cx="0.5094" cy="-0.8289" r="0.0067"/><circle cx="0.2413" cy="-0.7568" r="0.0044"/><circle cx="0.537" cy="-0.814" r="0.0048"/><circle cx="0.239" cy="-0.736" r="0.0065"/><circle cx="0.5033" cy="-0.7625" r="0.0037"/><circle cx="0.4039" cy="-0.7555" r="0.0036"/><circle cx="0.2756" cy="-0.7258" r="0.0048"/><circle cx="0.1473" cy="-0.6907" r="0.0051"/><circle cx="0.5911" cy="-0.7115" r="0.004"/><circle cx="0.4398" cy="-0.7221" r="0.0054"/><circle cx="0.5922" cy="-0.7105" r="0.0066"/><circle cx="0.576" cy="-0.7076" r="0.0062"/><circle cx="0.7319" cy="-0.6677" r="0.0041"/><circle cx="0.6915" cy="-0.6638" r="0.0107"/><circle cx="0.3469" cy="-0.6931" r="0.0056"/><circle cx="0.5509" cy="-0.6731" r="0.0037"/><circle cx="0.7586" cy="-0.5999" r="0.0045"/><circle cx="0.5988" cy="-0.6313" r="0.0133"/><circle cx="0.3617" cy="-0.6672" r="0.0076"/><circle cx="0.4206" cy="-0.6603" r="0.0047"/><circle cx="0.8094" cy="-0.5292" r="0.0055"/><circle cx="0.7606" cy="-0.5527" r="0.0101"/><circle cx="0.7532" cy="-0.5527" r="0.0037"/><circle cx="0.7219" cy="-0.5667" r="0.0047"/><circle cx="0.581" cy="-0.6159" r="0.004"/><circle cx="0.8494" cy="-0.4769" r="0.0046"/><circle cx="0.6019" cy="-0.5969" r="0.004"/><circle cx="0.6431" cy="-0.5691" r="0.0063"/><circle cx="0.5527" cy="-0.5963" r="0.0042"/><circle cx="0.597" cy="-0.5655" r="0.0068"/><circle cx="0.5455" cy="-0.5815" r="0.0046"/><circle cx="0.7655" cy="-0.4443" r="0.0082"/><circle cx="0.6624" cy="-0.5029" r="0.0068"/><circle cx="0.6415" cy="-0.506" r="0.0055"/><circle cx="0.6976" cy="-0.4708" r="0.005"/><circle cx="0.3438" cy="-0.6174" r="0.0101"/><circle cx="0.8699" cy="-0.3122" r="0.0059"/><circle cx="0.2408" cy="-0.625" r="0.0081"/><circle cx="0.8066" cy="-0.3343" r="0.0047"/><circle cx="0.5445" cy="-0.5101" r="0.0062"/><circle cx="0.627" cy="-0.4585" r="0.0038"/><circle cx="0.3424" cy="-0.5877" r="0.0041"/><circle cx="0.2289" cy="-0.6135" r="0.0047"/><circle cx="0.47" cy="-0.5282" r="0.0043"/><circle cx="0.3791" cy="-0.5652" r="0.0055"/><circle cx="0.7191" cy="-0.3516" r="0.0048"/><circle cx="0.902" cy="-0.1341" r="0.0103"/><circle cx="0.833" cy="-0.2281" r="0.0052"/><circle cx="0.7503" cy="-0.3196" r="0.0057"/><circle cx="0.3502" cy="-0.5729" r="0.0055"/><circle cx="0.4873" cy="-0.5082" r="0.0055"/><circle cx="0.9197" cy="0.0726" r="0.0042"/><circle cx="0.3" cy="-0.5645" r="0.0054"/><circle cx="0.8663" cy="-0.0278" r="0.0039"/><circle cx="0.8999" cy="0.0488" r="0.0088"/><circle cx="0.959" cy="0.2649" r="0.0053"/><circle cx="0.7013" cy="-0.268" r="0.0067"/><circle cx="0.2094" cy="-0.5912" r="0.004"/><circle cx="0.6229" cy="-0.338" r="0.0054"/><circle cx="0.8435" cy="-0.0357" r="0.0073"/><circle cx="0.3671" cy="-0.5216" r="0.0077"/><circle cx="0.5537" cy="-0.3872" r="0.0048"/><circle cx="0.3762" cy="-0.5088" r="0.0056"/><circle cx="0.5691" cy="-0.3668" r="0.0057"/><circle cx="0.8955" cy="0.1751" r="0.0057"/><circle cx="0.4772" cy="-0.4282" r="0.0047"/><circle cx="0.6432" cy="-0.2702" r="0.0041"/><circle cx="0.7671" cy="-0.0932" r="0.004"/><circle cx="0.8484" cy="0.0858" r="0.0065"/><circle cx="0.4179" cy="-0.4649" r="0.005"/><circle cx="0.4441" cy="-0.4441" r="0.0047"/><circle cx="0.8215" cy="0.052" r="0.004"/><circle cx="0.7946" cy="0.0113" r="0.0041"/><circle cx="0.8165" cy="0.0757" r="0.007"/><circle cx="0.3503" cy="-0.4976" r="0.0059"/><circle cx="0.4551" cy="-0.423" r="0.0052"/><circle cx="0.4964" cy="-0.3857" r="0.0047"/><circle cx="0.8537" cy="0.2318" r="0.004"/><circle cx="0.4284" cy="-0.4393" r="0.0067"/><circle cx="0.7948" cy="0.0849" r="0.006"/><circle cx="0.4095" cy="-0.4394" r="0.0044"/><circle cx="0.5183" cy="-0.3372" r="0.0038"/><circle cx="0.4714" cy="-0.3789" r="0.0048"/><circle cx="0.8377" cy="0.4995" r="0.0056"/><circle cx="0.7173" cy="-0.0456" r="0.0076"/><circle cx="0.5917" cy="-0.2439" r="0.004"/><circle cx="0.5821" cy="-0.2507" r="0.0089"/><circle cx="0.8233" cy="0.3652" r="0.0043"/><circle cx="0.6225" cy="-0.1788" r="0.0062"/><circle cx="0.6944" cy="-0.0539" r="0.0056"/><circle cx="0.0787" cy="-0.6132" r="0.0041"/><circle cx="0.792" cy="0.2879" r="0.006"/><circle cx="0.2574" cy="-0.5221" r="0.0074"/><circle cx="0.6073" cy="-0.1839" r="0.0074"/><circle cx="0.4625" cy="-0.3533" r="0.0036"/><circle cx="0.7862" cy="0.5957" r="0.0049"/><circle cx="0.7652" cy="0.2039" r="0.0068"/><circle cx="0.0645" cy="-0.6164" r="0.0043"/><circle cx="0.7784" cy="0.3233" r="0.008"/><circle cx="0.6882" cy="-0.0032" r="0.0037"/><circle cx="0.7747" cy="0.5886" r="0.0056"/><circle cx="0.4029" cy="-0.3988" r="0.0035"/><circle cx="0.7729" cy="0.5394" r="0.0135"/><circle cx="0.4551" cy="-0.3306" r="0.0071"/><circle cx="0.5533" cy="-0.1979" r="0.0102"/><circle cx="0.686" cy="0.0667" r="0.0049"/><circle cx="0.3904" cy="-0.3908" r="0.0044"/><circle cx="0.6281" cy="-0.0635" r="0.01"/><circle cx="0.308" cy="-0.4586" r="0.0039"/><circle cx="0.7435" cy="0.4453" r="0.0049"/><circle cx="0.6514" cy="0.0043" r="0.0047"/><circle cx="0.5627" cy="-0.1674" r="0.0041"/><circle cx="0.1566" cy="-0.5627" r="0.005"/><circle cx="0.7328" cy="0.4069" r="0.0069"/><circle cx="0.7319" cy="0.4261" r="0.0043"/><circle cx="0.3848" cy="-0.3748" r="0.0047"/><circle cx="0.6886" cy="0.1996" r="0.0055"/><circle cx="0.6916" cy="0.2403" r="0.0055"/><circle cx="0.6851" cy="0.2231" r="0.0037"/><circle cx="0.6484" cy="0.0867" r="0.0069"/><circle cx="0.3809" cy="-0.3651" r="0.004"/><circle cx="0.6853" cy="0.2427" r="0.005"/><circle cx="0.2209" cy="-0.5078" r="0.0042"/><circle cx="0.6959" cy="0.5802" r="0.005"/><circle cx="0.6829" cy="0.249" r="0.0035"/><circle cx="0.5421" cy="-0.1321" r="0.0046"/><circle cx="0.6861" cy="0.3936" r="0.0062"/><circle cx="0.2672" cy="-0.4604" r="0.0036"/><circle cx="0.5331" cy="-0.1228" r="0.005"/><circle cx="0.6763" cy="0.4018" r="0.0051"/><circle cx="0.6268" cy="0.1194" r="0.0036"/><circle cx="0.6053" cy="0.0612" r="0.0054"/><circle cx="0.5758" cy="-0.0081" r="0.0047"/><circle cx="0.2927" cy="-0.4269" r="0.0038"/><circle cx="0.6393" cy="0.658" r="0.0051"/><circle cx="0.6528" cy="0.4067" r="0.0043"/><circle cx="0.4709" cy="-0.189" r="0.0036"/><circle cx="0.618" cy="0.734" r="0.0043"/><circle cx="0.3713" cy="-0.32" r="0.0066"/><circle cx="0.5984" cy="0.7795" r="0.0042"/><circle cx="0.3913" cy="-0.2919" r="0.0053"/><circle cx="0.1231" cy="-0.5594" r="0.0082"/><circle cx="0.6251" cy="0.3186" r="0.0036"/><circle cx="0.5746" cy="0.0805" r="0.0058"/><circle cx="0.3809" cy="-0.2985" r="0.0057"/><circle cx="0.6233" cy="0.3663" r="0.004"/><circle cx="0.5813" cy="0.1256" r="0.0048"/><circle cx="0.6164" cy="0.3238" r="0.0048"/><circle cx="0.4612" cy="-0.1587" r="0.0037"/><circle cx="0.359" cy="-0.3102" r="0.0036"/><circle cx="0.5638" cy="0.1097" r="0.0036"/><circle cx="0.2744" cy="-0.4109" r="0.0038"/><circle cx="0.6033" cy="0.5079" r="0.0046"/><circle cx="0.2747" cy="-0.3946" r="0.0048"/><circle cx="0.4523" cy="-0.1036" r="0.0045"/><circle cx="0.5481" cy="0.1977" r="0.0038"/><circle cx="0.2813" cy="-0.3759" r="0.0038"/><circle cx="0.5181" cy="0.0829" r="0.006"/></g><g class="sky-lab"><text x="0.0026" y="-0.5799" font-size=".042">الجدي</text><text x="-0.1201" y="0.1184" font-size=".042">الدبران</text><text x="-0.2274" y="0.3402" font-size=".042">رجل الجبار</text><text x="-0.1532" y="-0.1554" font-size=".042">العيوق</text><text x="-0.3084" y="0.1778" font-size=".042">منكب الجوزاء</text><text x="-0.3694" y="0.8964" font-size=".042">سهيل</text><text x="-0.4703" y="0.4151" font-size=".042">الشعرى</text><text x="-0.449" y="-0.1311" font-size=".042">رأس التوأم</text><text x="-0.5795" y="0.1359" font-size=".042">الشعرى الشامية</text><text x="0.5988" y="-0.5793" font-size=".042">الذنب</text><text x="0.7729" y="0.5914" font-size=".042">فم الحوت</text><text x="-0.242" y="0.144" font-size=".05" style="fill:rgba(159,179,221,.7);font-style:italic">الجبار</text><text x="-0.461" y="-0.655" font-size=".05" style="fill:rgba(159,179,221,.7);font-style:italic">بنات نعش</text><text x="0" y="-1.065" font-size=".05" style="fill:var(--lamp);font-weight:700">شمال</text><text x="0" y="1.09" font-size=".05" style="fill:var(--lamp);font-weight:700">جنوب</text><text x="-1.075" y="0.015" font-size=".05" style="fill:var(--lamp);font-weight:700">شرق</text><text x="1.075" y="0.015" font-size=".05" style="fill:var(--lamp);font-weight:700">غرب</text><circle cx="0.1225" cy="0.0745" r=".02" fill="#ff7b5c" style="filter:drop-shadow(0 0 .02px #ff7b5c)"/><text x="0.1225" y="0.1345" font-size=".045" style="fill:#ffb4a0;font-weight:700">المريخ</text><circle cx="-0.7204" cy="-0.1567" r=".011" fill="#f5e3b0"/><text x="-0.7204" y="-0.1067" font-size=".04">زحل</text><clipPath id="moonClip6"><circle cx="0.2954" cy="0.1011" r=".04"/></clipPath><circle cx="0.2954" cy="0.1011" r=".04" fill="#fdf6ec"/><circle cx="0.2274" cy="0.1011" r=".04" fill="#0b1630" opacity=".85" clip-path="url(#moonClip6)"/><text x="0.2954" y="0.1861" font-size=".042">القمر</text></g><g class="thurayya-g" id="thurayya6"><circle cx="-0.0159" cy="0.0051" r=".09" fill="transparent"/><circle class="ring" cx="-0.0159" cy="0.0051" r=".045"/><g class="sky-lab"><text x="-0.0159" y="-0.0549" font-size=".05" style="fill:var(--lamp);font-weight:700">الثريا</text></g></g></svg></div>
+  <div class="ask6" aria-live="polite"><span class="q" id="q6"></span><span class="f" id="f6"></span></div>
+  <div class="dots5" id="dots6"></div>
+</section>
+
+<!-- chapter 7 intro -->
+<section class="scene" id="c7intro">
+  <div class="chap-no">الفصل 7</div>
+  <h2 class="chap-title">77 يوم</h2>
+  <div class="chap-date">من 29 أغسطس لين اليوم</div>
+  <p class="chap-story">كل نقطة يوم من أيامنا<br>مرري صبعك عليها ونوريها كلها… يوم يوم</p>
+  <button class="btn" id="c7start">أبي أشوفها</button>
+</section>
+
+<!-- chapter 7 game -->
+<section class="scene" id="c7game">
+  <div class="cnt7"><span id="cnt7">0</span> <small>من 77 يوم</small></div>
+  <svg id="days7" viewBox="0 0 380 360" aria-label="أيامنا"></svg>
+  <div class="day7" aria-live="polite"><span class="d" id="d7">مرري صبعك على النقاط</span><span class="m" id="m7"></span></div>
+</section>
+
+<!-- birthday lock -->
+<section class="scene lock" id="locked">
+  <div class="moon" aria-hidden="true"></div>
+  <h2 class="chap-title" style="font-size:2rem">مو الحين يا نجد 😼</h2>
+  <p class="chap-story">الهدية تنفتح الساعة 12 بالليل… أول دقيقة من 14 نوفمبر</p>
+  <div class="cd" id="cd"></div>
+</section>
+
+<!-- chapter 8: door -->
+<section class="scene" id="c8door">
+  <div class="chap-no">الفصل الأخير</div>
+  <h2 class="chap-title">الباب الأخير</h2>
+  <button class="door" id="door" aria-label="افتحي الباب">
+    <span class="leaf l"><span class="knob"></span></span><span class="leaf r"><span class="knob"></span></span>
+    <span class="keys" id="keys"></span>
+  </button>
+  <p class="chap-story" id="doorTxt">معك 7 حروف… والباب عنده الأخير<br>المسيه</p>
+</section>
+
+<!-- chapter 8: build the word -->
+<section class="scene" id="c8word">
+  <p class="chap-story" id="wordTxt">رتبي الحروف… وطلعي الكلمة السرية</p>
+  <div class="slots8" id="slots8"></div>
+  <div class="tiles8" id="tiles8"></div>
+  <div class="hint" id="hint8">تلميح: الكلمة اللي إذا قلتيها… ما أقدر أقول لا</div>
+</section>
+
+<!-- chapter 8: treasure mirror -->
+<section class="scene" id="c8mirror">
+  <div class="chap-no">الكنز</div>
+  <div class="mirror" id="mirror"><div class="glint"></div></div>
+  <p class="treasure">الكنز كان أنتِ… من البداية 🤍</p>
+  <button class="btn" id="toCake">وفيه بعد…</button>
+</section>
+
+<!-- chapter 8: cake -->
+<section class="scene" id="c8cake">
+  <h2 class="chap-title" style="font-size:2.2rem">تمني أمنية…</h2>
+  <div class="cake" id="cake">
+    <svg viewBox="0 0 300 210" aria-hidden="true">
+      <ellipse cx="150" cy="196" rx="140" ry="12" fill="rgba(0,0,0,.3)"/>
+      <rect x="40" y="96" width="220" height="96" rx="14" fill="#dfe8fb"/>
+      <path d="M40 120 q18 16 36 0 t36 0 t36 0 t36 0 t36 0 t40 0 v-10 h-220z" fill="#2c4c94"/>
+      <ellipse cx="150" cy="96" rx="110" ry="22" fill="#f6f1e6"/>
+      <text x="150" y="168" text-anchor="middle" font-family="El Messiri, serif" font-size="30" font-weight="700" fill="#132650">21</text>
+      <text x="150" y="186" text-anchor="middle" font-family="Tajawal, sans-serif" font-size="11" fill="#2c4c94">نجد من نجد</text>
+    </svg>
+  </div>
+  <div class="cake-cnt" id="cakeCnt">انفخي على الجوال… أو المسي الشموع</div>
+  <button class="btn ghost" id="micBtn">نفخ بالمايك 🎤</button>
+</section>
+
+<!-- chapter 8: letter -->
+<section class="scene" id="c8letter">
+  <div class="lt-head"><div class="av">S</div><div><div class="who">صالح</div><div class="st" id="ltSt">typing…</div></div></div>
+  <div class="lt" id="lt" aria-live="polite"></div>
+  <button class="btn" id="ltNext" hidden>آخر شي…</button>
+</section>
+
+<!-- chapter 8: ending -->
+<section class="scene" id="c8end">
+  <p class="end-step" id="end1">روحي للشباك… وطالعي فوق<br>نفس السما اللي كانت منورة لك ليلة ما جيتي</p>
+  <p class="end-step" id="end2" hidden>وبعدها… أرسلي لي الكلمة السرية</p>
+  <div class="word-chip" id="chip" hidden><b>نجد من نجد</b><button id="copyW">انسخيها</button></div>
+  <a class="btn ig" id="igBtn" href="https://ig.me/m/idk.t7" target="_blank" rel="noopener" hidden>أرسليها لي 🤍</a>
+  <h2 class="fin" id="fin" hidden>كل عام وأنتِ نجد من نجد 🤍</h2>
+  <button class="btn ghost" id="replay" hidden>رجوع للخريطة</button>
+</section>
+
+<div class="toast" id="toast" dir="auto"></div>
+
+<!-- 6. reward -->
+<section class="scene" id="reward">
+  <div class="big-letter" id="bigLetter">ن</div>
+  <p class="reward-cap" id="rewardCap">رسالة وحدة… وصارت أحلى صدفة بحياتي</p>
+  <p class="reward-sub" id="rewardSub">حصلتي أول حرف</p>
+  <button class="btn" id="backMap">رجوع للخريطة</button>
+</section>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- storage (preview-safe) ---------- */
+const KEY='najd21';
+let state={done:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.done))state=s}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+
+/* ---------- the secret word & chapters ---------- */
+const WORD=['ن','ج','د',null,'م','ن',null,'ن','ج','د']; // نجد من نجد
+const CHAPTERS=[
+  {n:1,t:'الـ Hey'},{n:2,t:'الكابتن'},{n:3,t:'مناوبة طوارئ'},{n:4,t:'اليوم أو أبدًا'},
+  {n:5,t:'لغتنا'},{n:6,t:'سما نجد'},{n:7,t:'77 يوم'},{n:8,t:'الباب الأخير'}
+];
+const PLAYABLE=8; // chapters built so far
+const INTRO={1:'c1intro',2:'c2intro',3:'c3intro',4:'c4intro',5:'c5intro',6:'c6intro',7:'c7intro',8:'c8door'};
+const PREVIEW=false; // false in the copy she gets: locks until her birthday and hides the reset button
+
+/* ---------- scenes ---------- */
+let current='gate';
+function go(id){$(current).classList.remove('on');$(id).classList.add('on');current=id}
+
+/* ---------- night sky ---------- */
+const sky=$('sky'),ctx=sky.getContext('2d');let stars=[],W,H,shoot=null;
+function sizeSky(){const d=devicePixelRatio||1;W=innerWidth;H=innerHeight;sky.width=W*d;sky.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+  stars=Array.from({length:Math.round(W*H/2600)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6.28,s:.4+Math.random()*1.4}))}
+sizeSky();addEventListener('resize',sizeSky);
+function drawSky(t){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#060e22');g.addColorStop(.6,'#0b1838');g.addColorStop(1,'#13285a');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const s of stars){ctx.globalAlpha=.35+.65*Math.abs(Math.sin(s.p+t/1000*s.s));ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.28);ctx.fill()}
+  ctx.globalAlpha=1;
+  if(!shoot&&Math.random()<.003)shoot={x:Math.random()*W,y:Math.random()*H*.4,l:0};
+  if(shoot){shoot.l+=14;const a=1-shoot.l/500;ctx.strokeStyle=`rgba(255,255,255,${Math.max(a,0)})`;ctx.lineWidth=1.5;ctx.beginPath();
+    ctx.moveTo(shoot.x-shoot.l,shoot.y+shoot.l*.4);ctx.lineTo(shoot.x-shoot.l+60,shoot.y+shoot.l*.4-24);ctx.stroke();if(a<=0)shoot=null}
+  requestAnimationFrame(drawSky)}
+requestAnimationFrame(drawSky);
+
+/* ---------- original music (Web Audio, made here) ---------- */
+let ac,master,musicOn=true,loopTimer;
+function initAudio(){
+  try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+  master=ac.createGain();master.gain.value=.55;
+  const delay=ac.createDelay();delay.delayTime.value=.42;const fb=ac.createGain();fb.gain.value=.38;const wet=ac.createGain();wet.gain.value=.35;
+  delay.connect(fb);fb.connect(delay);delay.connect(wet);wet.connect(ac.destination);master.connect(ac.destination);master.connect(delay);
+}
+function note(freq,t,dur=1.6,vol=.12,type='sine'){
+  if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.05)}
+const hz=m=>440*Math.pow(2,(m-69)/12);
+// a gentle music-box progression in D major: D – Bm – G – A
+const PROG=[[62,66,69,74],[59,62,66,71],[55,59,62,67],[57,61,64,69]];
+const MELODY=[78,76,74,76,78,81,78,76, 74,73,71,73,74,76,74,71, 71,74,79,78,76,74,76,78, 76,73,69,73,76,78,76,73];
+let beat=0;
+function loop(){
+  if(!ac||!musicOn)return;const t0=ac.currentTime+.05,step=.38;
+  for(let i=0;i<8;i++){const t=t0+i*step,b=beat+i,ch=PROG[Math.floor(b/8)%4];
+    note(hz(MELODY[b%32]),t,1.4,.07,'triangle');
+    if(i%4===0){note(hz(ch[0]-12),t,3.2,.09);note(hz(ch[1]),t,3,.03);note(hz(ch[2]),t,3,.03)}
+    if(i%2===1)note(hz(ch[3]+12),t,.8,.02)}
+  beat+=8;loopTimer=setTimeout(loop,step*8*1000-60)}
+function chime(up=true){if(!ac)return;const t=ac.currentTime;(up?[74,78,81,86]:[62,61]).forEach((m,i)=>note(hz(m),t+i*.09,1.2,.12,'triangle'))}
+function soft(){if(!ac)return;note(hz(50),ac.currentTime,.25,.08,'square')}
+const ICON_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const ICON_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
+$('mute').innerHTML=ICON_ON;
+$('mute').onclick=()=>{musicOn=!musicOn;$('mute').innerHTML=musicOn?ICON_ON:ICON_OFF;
+  if(ac){master.gain.setTargetAtTime(musicOn?.55:0,ac.currentTime,.2)}if(musicOn){clearTimeout(loopTimer);loop()}};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+
+/* ---------- opening sequence ---------- */
+$('begin').onclick=async()=>{
+  initAudio();if(ac&&ac.state==='suspended')ac.resume();
+  $('mute').hidden=false;
+  go('dm');await sleep(900);
+  $('stamp').classList.add('show');await sleep(900);
+  $('typing').classList.add('show');await sleep(2200);
+  $('typing').classList.remove('show');$('hey').classList.add('show');chime();buzz(30);
+  await sleep(1400);$('seen').classList.add('show');
+  await sleep(1600);loop();
+  // if she already played before, skip straight to the map
+  if(state.done.length){renderMap();go('map');return}
+  go('title');await sleep(700);
+  $('kicker').classList.add('show-o');
+  const t='نجد من نجد';$('h1').innerHTML=t.split(' ').map(w=>`<span>${w}</span>`).join(' ');
+  const parts=[...$('h1').children];
+  for(const p of parts){await sleep(650);p.classList.add('in')}
+  await sleep(900);$('sub').classList.add('show-o');
+  await sleep(1300);$('toMap').classList.add('show-o');
+};
+$('toMap').onclick=()=>{renderMap();go('map')};
+
+/* ---------- map ---------- */
+function letterCount(){return state.done.length}
+function renderMap(){
+  // word slots
+  let k=0;const got=letterCount();
+  $('word').innerHTML=WORD.map(ch=>ch?`<div class="slot ${k++<got?'got':''}">${ch}</div>`:'<div class="gap"></div>').join('');
+  $('wordCap').textContent=got? `${got} من 8 حروف… كملي` : 'كل فصل يعطيك حرف… اجمعيهم كلهم';
+  // winding path
+  const pw=Math.min(360,innerWidth-32),stepY=96,h=stepY*CHAPTERS.length+20;
+  const pts=CHAPTERS.map((c,i)=>({x:pw/2+Math.sin(i*1.25)*pw*.3,y:50+i*stepY}));
+  let d=`M${pts[0].x},${pts[0].y}`;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],my=(a.y+b.y)/2;d+=` C${a.x},${my} ${b.x},${my} ${b.x},${b.y}`}
+  const doneUpTo=got;
+  $('path').style.height=h+'px';
+  $('path').innerHTML=`<svg viewBox="0 0 ${pw} ${h}" aria-hidden="true">
+    <path d="${d}" fill="none" stroke="rgba(223,232,251,.18)" stroke-width="2" stroke-dasharray="4 8" stroke-linecap="round"/>
+  </svg>`+CHAPTERS.map((c,i)=>{
+    const done=state.done.includes(c.n),open=!done&&i===doneUpTo&&c.n<=PLAYABLE,soon=!done&&i===doneUpTo&&c.n>PLAYABLE;
+    const cls=done?'done':open?'open':'locked';
+    const label=done||open||soon?c.t:'؟';
+    const inner=done?'✓':c.n;
+    return `<button class="node ${cls}" data-n="${c.n}" style="left:${pts[i].x}px;top:${pts[i].y}px" ${open?'':'tabindex="-1"'}>
+      <span class="dot">${inner}</span><span class="lbl">${label}${soon?'<br><small>قريبًا</small>':''}</span></button>`}).join('');
+  $('path').querySelectorAll('.node.open').forEach(b=>b.onclick=()=>{const id=INTRO[+b.dataset.n];if(id==='c8door')setupDoor();if(id)go(id)});
+}
+$('reset').onclick=()=>{state={done:[]};save();renderMap()};
+if(!PREVIEW)document.querySelector('.preview-note').hidden=true;
+// birthday lock: opens at 00:00 on 14 Nov 2026, Riyadh time (UTC+3)
+const OPEN_AT=Date.UTC(2026,10,13,21,0,0);
+function lockTick(){const ms=OPEN_AT-Date.now();if(ms<=0){location.reload();return}
+  const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60,s2=Math.floor(ms/1e3)%60;
+  $('cd').innerHTML=[[d,'يوم'],[h,'ساعة'],[m,'دقيقة'],[s2,'ثانية']].map(([v,l])=>`<div><b>${String(v).padStart(2,'0')}</b><span>${l}</span></div>`).join('');
+  setTimeout(lockTick,1000)}
+if(!PREVIEW&&Date.now()<OPEN_AT){$('gate').classList.remove('on');current='locked';$('locked').classList.add('on');lockTick()}
+
+/* ---------- chapter 1: catch the Hey ---------- */
+const NOISE=['هلا','Hi','مرحبا','😂😂','صباح الخير','وينك؟','Hello','ok','تمام','😂','يا هلا','hey?','Heyy','hi there','ههههه','وش الأخبار','👀','lol','وش تسوين','Hey!','الحمدلله','good night','؟؟','yo','💀','Hai','he y','تصبحين على خير','بسم الله','مين؟'];
+let raf,bubbles=[],caught=0,lastHey=0,spawnT=0,gameStart=0,running=false,sinceHey=0;
+const NEED=3;
+function hud(){$('hud').innerHTML=Array.from({length:NEED},(_,i)=>`<div class="pip ${i<caught?'got':''}">${i<caught?'Hey':''}</div>`).join('')}
+$('c1start').onclick=()=>{go('c1game');startC1()};
+function startC1(){
+  bubbles.forEach(b=>b.el.remove());bubbles=[];caught=0;sinceHey=0;hud();
+  $('hint').innerHTML='المسي رسالة <b>Hey</b> الزرقا… وانتبهي للي تشبهها';$('hint').classList.remove('warn');
+  running=true;gameStart=performance.now();spawnT=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick)}
+function speed(){return 55+caught*28} // px per second, faster each catch
+function spawn(){
+  const field=$('field'),fw=field.clientWidth;
+  const isHey=sinceHey>=3&&Math.random()<.45||sinceHey>=6;
+  const el=document.createElement('button');el.className='bub'+(isHey?' me':'');
+  let txt=isHey?'Hey':NOISE[Math.floor(Math.random()*NOISE.length)];
+  // decoys sometimes wear the blue too, to keep her honest
+  if(!isHey&&caught>=1&&Math.random()<.22&&/^h/i.test(txt))el.classList.add('me');
+  el.textContent=txt;field.appendChild(el);
+  const w=el.offsetWidth,x=8+Math.random()*Math.max(1,fw-w-16);
+  const b={el,x,y:field.clientHeight+10,hey:isHey,v:speed()*(.8+Math.random()*.5),wob:Math.random()*6.28,dead:false};
+  el.addEventListener('pointerdown',e=>{e.preventDefault();tap(b,e)});
+  bubbles.push(b);sinceHey=isHey?0:sinceHey+1}
+function tick(now){
+  if(!running)return;const dt=Math.min(.05,(now-(tick.last||now))/1000);tick.last=now;
+  spawnT-=dt;if(spawnT<=0){spawn();spawnT=Math.max(.32,.75-caught*.13)}
+  for(const b of bubbles){if(b.dead)continue;b.y-=b.v*dt;b.wob+=dt*2;const tx=b.x+Math.sin(b.wob)*6;
+    b.el.style.setProperty('--t',`translate(${tx}px,${b.y}px)`);b.el.style.transform=`translate(${tx}px,${b.y}px)`;
+    if(b.y<-60){b.dead=true;b.el.remove();if(b.hey){$('hint').textContent='راحت عليك! بتجي وحدة ثانية 👀';$('hint').classList.add('warn')}}}
+  bubbles=bubbles.filter(b=>!b.dead||b.el.isConnected);
+  raf=requestAnimationFrame(tick)}
+function sparks(x,y){const f=$('field');for(let i=0;i<10;i++){const s=document.createElement('span');s.className='spark';s.textContent=i%3?'✦':'🤍';
+  s.style.left=x+'px';s.style.top=y+'px';const a=Math.random()*6.28,r=40+Math.random()*50;s.style.setProperty('--dx',Math.cos(a)*r+'px');s.style.setProperty('--dy',Math.sin(a)*r+'px');
+  f.appendChild(s);setTimeout(()=>s.remove(),1000)}}
+const OOPS=['لا هذي مو رسالتي 😾','قريبة… بس لا','ركزي يا نجد 😼','هذي مو أنا والله','دوري على Hey بالضبط'];
+function tap(b,e){
+  if(b.dead||!running)return;const r=$('field').getBoundingClientRect();
+  if(b.hey){b.dead=true;b.el.classList.add('pop');setTimeout(()=>b.el.remove(),500);caught++;hud();chime();buzz([20,40,20]);
+    sparks(e.clientX-r.left,e.clientY-r.top);$('hint').classList.remove('warn');
+    $('hint').textContent=caught<NEED?['أيوه! هذي هي 🤍','مرة ثانية… أسرع شوي'][caught-1]||'':'';
+    if(caught>=NEED)winC1()}
+  else{b.el.classList.remove('no');void b.el.offsetWidth;b.el.classList.add('no');soft();buzz(60);
+    $('hint').textContent=OOPS[Math.floor(Math.random()*OOPS.length)];$('hint').classList.add('warn')}}
+async function winC1(){
+  running=false;cancelAnimationFrame(raf);await sleep(700);
+  showReward(1,'رسالة وحدة… وصارت أحلى صدفة بحياتي');
+}
+const ORD=['أول','ثاني','ثالث','رابع','خامس','سادس','سابع','ثامن'];
+function showReward(n,cap){
+  if(!state.done.includes(n))state.done.push(n);save();
+  const letters=WORD.filter(Boolean);
+  $('bigLetter').textContent=letters[n-1];
+  $('bigLetter').style.animation='none';void $('bigLetter').offsetWidth;$('bigLetter').style.animation='';
+  $('rewardCap').textContent=cap;
+  $('rewardSub').textContent=`حصلتي ${ORD[n-1]} حرف`;
+  go('reward');chime();buzz([30,60,30,60,80]);
+}
+$('backMap').onclick=()=>{renderMap();go('map')};
+
+/* ---------- chapter 2: the captain ---------- */
+const cv=$('court'),cx=cv.getContext('2d');
+let CW=0,CH=0,v={},raf2,running2=false;
+function sizeCourt(){const d=devicePixelRatio||1,r=cv.getBoundingClientRect();CW=r.width;CH=r.height;cv.width=CW*d;cv.height=CH*d;cx.setTransform(d,0,0,d,0,0)}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.remove('show');void el.offsetWidth;el.classList.add('show')}
+function whistle(){if(!ac)return;const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain(),l=ac.createOscillator(),lg=ac.createGain();
+  o.frequency.value=2900;l.frequency.value=28;lg.gain.value=180;l.connect(lg);lg.connect(o.frequency);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.02);g.gain.setValueAtTime(.06,t+.35);g.gain.linearRampToValueAtTime(0,t+.45);
+  o.connect(g);g.connect(master);o.start(t);l.start(t);o.stop(t+.5);l.stop(t+.5)}
+function thump(big){if(!ac)return;const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type='sine';
+  o.frequency.setValueAtTime(big?180:120,t);o.frequency.exponentialRampToValueAtTime(40,t+.18);
+  g.gain.setValueAtTime(big?.5:.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.connect(g);g.connect(master);o.start(t);o.stop(t+.3)}
+function cheer(){if(!ac)return;const t=ac.currentTime,len=1.4,buf=ac.createBuffer(1,ac.sampleRate*len,ac.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);
+  const src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();src.buffer=buf;f.type='bandpass';f.frequency.value=1400;f.Q.value=.6;
+  g.gain.value=.18;src.connect(f);f.connect(g);g.connect(master);src.start(t)}
+
+// court geometry (portrait, slight perspective)
+function geo(){const top=CH*.07,net=CH*.43,bot=CH*.95,w=CW;
+  return{top,net,bot,lx:y=>{const k=(y-top)/(bot-top);return w*(.2-.14*k)},rx:y=>{const k=(y-top)/(bot-top);return w*(.8+.14*k)}}}
+function startC2(){
+  sizeCourt();
+  v={us:21,them:24,ball:null,player:{x:CW/2,swing:0},trail:[],teammate:null,over:false};
+  $('scUs').textContent=21;$('scThem').textContent=24;
+  $('hint2').textContent='المسي الشاشة لما الكورة توصل للدائرة';$('hint2').classList.remove('warn');
+  running2=true;cancelAnimationFrame(raf2);tick2.last=0;raf2=requestAnimationFrame(tick2);
+  setTimeout(()=>{whistle();serve()},900)}
+function serveDur(){return Math.max(.95,1.75-(v.us-21)*.17)}
+function serve(){
+  if(!running2)return;const g=geo();
+  const sx=CW*(.3+Math.random()*.4),sy=g.top+CH*.08;
+  const tx=CW*(.25+Math.random()*.5),ty=g.bot-CH*.12;
+  v.ball={mode:'in',t:0,dur:serveDur(),sx,sy,tx,ty,hitH:CH*.13,peak:CH*.32,tapped:false}}
+function ballPos(b){
+  if(b.mode==='in'){const t=Math.min(b.t,1.25),gx=b.sx+(b.tx-b.sx)*t,gy=b.sy+(b.ty-b.sy)*t;
+    const h=b.peak*4*t*(1-t)+b.hitH*t-(t>1?(t-1)*b.hitH*4:0);return{x:gx,y:gy-Math.max(h,0),gy,r:9+t*9}}
+  if(b.mode==='out'){const t=b.t,gx=b.hx+(b.rx-b.hx)*t,gy=b.hy+(b.ry-b.hy)*t;const h=b.hh*(1-t)+CH*.12*4*t*(1-t);
+    return{x:gx,y:gy-h,gy,r:18-t*10}}
+  return{x:b.tx,y:b.ty,gy:b.ty,r:18}}
+cv.addEventListener('pointerdown',e=>{
+  e.preventDefault();if(!running2||!v.ball||v.ball.mode!=='in'||v.ball.tapped)return;
+  const b=v.ball,t=b.t;b.tapped=true;v.player.swing=1;
+  if(t>=.84&&t<=1.1){
+    const perfect=Math.abs(t-1)<.07;const p=ballPos(b);
+    v.ball={mode:'out',t:0,dur:.42,hx:p.x,hy:p.gy,hh:p.gy-p.y,rx:CW*(.25+Math.random()*.5),ry:geo().top+CH*.12};
+    thump(true);buzz(perfect?[25,30,60]:30);if(perfect)toast('Perfect! 🏐');
+    $('hint2').classList.remove('warn');
+  }else{
+    $('hint2').textContent=t<.84?'بدري شوي! استني توصل الدائرة':'تأخرتي شوي!';$('hint2').classList.add('warn');soft()}
+});
+function point(){
+  v.us++;const el=$('scUs');el.textContent=v.us;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
+  cheer();chime();
+  const left=26-v.us;
+  if(v.us>=26){v.over=true;$('hint2').textContent='';toast('فزتي! 26 – 24');setTimeout(winC2,1700);return}
+  $('hint2').textContent=v.us===24?'تعادل! كملي 🔥':v.us===25?'نقطة وحدة وتفوزين!':`باقي ${left} نقاط… استمري`;
+  setTimeout(serve,1100)}
+const SAVES=['صاحبتك أنقذتها! خذي الكورة ثانية 🤍','الفريق كله وراك… مرة ثانية','ولا يهمك، رجعوها لك'];
+function missed(){
+  v.ball={mode:'floor',tx:v.ball.tx,ty:v.ball.ty,t:0};thump(false);
+  v.teammate={x:v.ball.tx,t:0};
+  $('hint2').textContent=SAVES[Math.floor(Math.random()*SAVES.length)];$('hint2').classList.add('warn');
+  setTimeout(()=>{v.teammate=null;serve()},1400)}
+function drawPerson(x,y,s,c,num,swing){
+  cx.save();cx.translate(x,y);cx.scale(s,s);
+  cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(0,2,16,5,0,0,6.28);cx.fill();
+  cx.fillStyle=c;cx.beginPath();cx.roundRect(-11,-42,22,30,7);cx.fill();           // body
+  cx.fillRect(-8,-14,6,14);cx.fillRect(2,-14,6,14);                                  // legs
+  cx.fillStyle='#f3d9c6';cx.beginPath();cx.arc(0,-52,10,0,6.28);cx.fill();           // head
+  cx.strokeStyle=c;cx.lineWidth=5;cx.lineCap='round';cx.beginPath();
+  const a=-1.9+swing*1.6;cx.moveTo(8,-38);cx.lineTo(8+Math.cos(a)*20,-38+Math.sin(a)*20);cx.stroke();
+  cx.beginPath();cx.moveTo(-8,-38);cx.lineTo(-18,-24);cx.stroke();
+  if(num){cx.fillStyle='rgba(8,18,42,.85)';cx.font='700 11px Tajawal,sans-serif';cx.textAlign='center';cx.fillText(num,0,-22)}
+  cx.restore()}
+function drawBall(x,y,r){
+  cx.save();cx.translate(x,y);cx.fillStyle='#fdfcf6';cx.beginPath();cx.arc(0,0,r,0,6.28);cx.fill();
+  cx.strokeStyle='#2c4c94';cx.lineWidth=Math.max(1.2,r*.13);
+  cx.beginPath();cx.arc(-r*.3,-r*.9,r*1.05,.6,1.9);cx.stroke();
+  cx.beginPath();cx.arc(r*.9,r*.2,r*1.05,2.2,3.5);cx.stroke();
+  cx.beginPath();cx.arc(-r*.6,r*.7,r*1.05,-.8,.5);cx.stroke();cx.restore()}
+function tick2(now){
+  if(!running2)return;const dt=tick2.last?Math.min(.05,(now-tick2.last)/1000):0;tick2.last=now;
+  const g=geo();cx.clearRect(0,0,CW,CH);
+  // floor
+  const fl=cx.createLinearGradient(0,g.top,0,g.bot);fl.addColorStop(0,'#1a336b');fl.addColorStop(1,'#24407a');
+  cx.fillStyle=fl;cx.beginPath();cx.moveTo(g.lx(g.top),g.top);cx.lineTo(g.rx(g.top),g.top);cx.lineTo(g.rx(g.bot),g.bot);cx.lineTo(g.lx(g.bot),g.bot);cx.closePath();cx.fill();
+  cx.strokeStyle='rgba(255,255,255,.55)';cx.lineWidth=2;cx.stroke();
+  const atk=y=>{cx.beginPath();cx.moveTo(g.lx(y),y);cx.lineTo(g.rx(y),y);cx.stroke()};
+  cx.lineWidth=1.2;cx.strokeStyle='rgba(255,255,255,.3)';atk(g.net-(g.net-g.top)*.33);atk(g.net+(g.bot-g.net)*.3);
+  // opponents
+  [[.35,.2],[.6,.17],[.5,.3]].forEach(([px,py])=>drawPerson(CW*px,g.top+CH*py,.55,'#5b6e96',''));
+  // net
+  const nl=g.lx(g.net)-8,nr=g.rx(g.net)+8,nh=CH*.07;
+  cx.fillStyle='rgba(223,232,251,.08)';cx.fillRect(nl,g.net-nh,nr-nl,nh);
+  cx.strokeStyle='rgba(223,232,251,.35)';cx.lineWidth=1;
+  for(let x=nl;x<=nr;x+=9){cx.beginPath();cx.moveTo(x,g.net-nh);cx.lineTo(x,g.net);cx.stroke()}
+  for(let y=g.net-nh;y<=g.net;y+=7){cx.beginPath();cx.moveTo(nl,y);cx.lineTo(nr,y);cx.stroke()}
+  cx.fillStyle='#fff';cx.fillRect(nl,g.net-nh-3,nr-nl,4);
+  cx.fillStyle='#93a6cf';cx.fillRect(nl-4,g.net-nh-6,4,nh+8);cx.fillRect(nr,g.net-nh-6,4,nh+8);
+  // teammates
+  drawPerson(CW*.24,g.bot-CH*.2,.75,'#9fb3dd','7');drawPerson(CW*.78,g.bot-CH*.24,.75,'#9fb3dd','12');
+  if(v.teammate){v.teammate.t+=dt;drawPerson(v.teammate.x,g.bot-CH*.06,.85,'#cdd9f2','3')}
+  // ball logic
+  const b=v.ball;
+  if(b){
+    b.t+=dt/(b.dur||1);
+    if(b.mode==='in'&&b.t>1.18&&!v.over)missed();
+    if(b.mode==='out'&&b.t>=1){v.ball=null;point()}
+  }
+  // player follows the ball
+  const pl=v.player;const want=b&&b.mode==='in'?b.tx+14:CW/2;pl.x+=(want-pl.x)*Math.min(1,dt*4);pl.swing=Math.max(0,pl.swing-dt*3);
+  if(v.ball){const p=ballPos(v.ball);
+    // shadow
+    cx.fillStyle='rgba(0,0,0,.28)';cx.beginPath();cx.ellipse(p.x,p.gy,p.r*.9,p.r*.3,0,0,6.28);cx.fill();
+    // target ring
+    if(v.ball.mode==='in'){const bb=v.ball,tx=bb.tx,ty=bb.ty-bb.hitH,rr=18+Math.max(0,1-bb.t)*90;
+      const good=bb.t>=.84&&bb.t<=1.1;
+      cx.strokeStyle=good?'rgba(242,213,140,.95)':'rgba(255,255,255,.55)';cx.lineWidth=good?3:2;
+      cx.beginPath();cx.arc(tx,ty,rr,0,6.28);cx.stroke();
+      cx.setLineDash([3,5]);cx.strokeStyle='rgba(255,255,255,.35)';cx.beginPath();cx.arc(tx,ty,20,0,6.28);cx.stroke();cx.setLineDash([])}
+    if(v.ball.mode==='out'){v.trail.push({x:p.x,y:p.y,a:1})}
+  }
+  v.trail.forEach(t=>{t.a-=dt*2.5;cx.fillStyle=`rgba(242,213,140,${Math.max(0,t.a)*.6})`;if(t.a>0){cx.beginPath();cx.arc(t.x,t.y,6*t.a,0,6.28);cx.fill()}});
+  v.trail=v.trail.filter(t=>t.a>0);
+  drawPerson(pl.x,g.bot-CH*.06,1,'#ffffff','21',pl.swing);
+  cx.fillStyle='#f2d58c';cx.font='700 10px Tajawal,sans-serif';cx.textAlign='center';cx.fillText('C',pl.x-4,g.bot-CH*.06-60);
+  if(v.ball){const p=ballPos(v.ball);drawBall(p.x,p.y,p.r)}
+  raf2=requestAnimationFrame(tick2)}
+$('c2start').onclick=()=>{go('c2game');setTimeout(startC2,950)};
+addEventListener('resize',()=>{if(running2)sizeCourt()});
+/* ---------- chapter 3: ER shift ---------- */
+const ecg=$('ecg'),ex=ecg.getContext('2d');let EW,EH,ecgBuf=[],ecgMode='flat',ecgPhase=0,raf3,running3=false;
+let taps=[],good=0,metro=0,c3done=false,tarzanStage=0;const GOAL=30;
+function sizeEcg(){const d=devicePixelRatio||1,r=ecg.getBoundingClientRect();EW=r.width;EH=r.height;ecg.width=EW*d;ecg.height=EH*d;ex.setTransform(d,0,0,d,0,0);ecgBuf=new Array(Math.ceil(EW)).fill(0)}
+function beep(f=1000,d=.09,v=.06){if(!ac)return;const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type='sine';
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02)}
+function tSay(txt,ms=2200){const el=$('tSay');el.textContent=txt;el.classList.add('on');clearTimeout(tSay.h);if(ms)tSay.h=setTimeout(()=>el.classList.remove('on'),ms)}
+let spike=0;
+function ecgSample(){ // one pixel of trace
+  if(ecgMode==='flat')return (Math.random()-.5)*.03;
+  if(ecgMode==='cpr'){const v=spike;spike*=.82;return v+(Math.random()-.5)*.04}
+  // normal sinus rhythm ~ 78 bpm
+  ecgPhase+=1;const per=58,p=ecgPhase%per;
+  if(p===0)beep(1000,.07,.05);
+  if(p<6)return Math.sin(p/6*Math.PI)*.12;
+  if(p===10)return -.15;if(p===11)return .95;if(p===12)return -.35;
+  if(p>20&&p<32)return Math.sin((p-20)/12*Math.PI)*.22;return 0}
+function tick3(now){
+  if(!running3)return;
+  for(let i=0;i<2;i++){ecgBuf.push(ecgSample());ecgBuf.shift()}
+  ex.clearRect(0,0,EW,EH);
+  ex.strokeStyle='rgba(111,227,165,.08)';ex.lineWidth=1;for(let x=0;x<EW;x+=14){ex.beginPath();ex.moveTo(x,0);ex.lineTo(x,EH);ex.stroke()}
+  ex.strokeStyle=ecgMode==='flat'?'#ff8a8a':'#6fe3a5';ex.lineWidth=2;ex.shadowColor=ex.strokeStyle;ex.shadowBlur=6;ex.beginPath();
+  ecgBuf.forEach((v,x)=>{const y=EH*.62-v*EH*.5;x?ex.lineTo(x,y):ex.moveTo(x,y)});ex.stroke();ex.shadowBlur=0;
+  // metronome guide at 110/min
+  if(!c3done&&now-metro>545){metro=now;const g=$('guide');g.classList.remove('beat');void g.offsetWidth;g.classList.add('beat')}
+  raf3=requestAnimationFrame(tick3)}
+function startC3(){
+  sizeEcg();ecgMode='flat';taps=[];good=0;c3done=false;tarzanStage=0;
+  $('cprBar').style.width='0';$('hr').textContent='0';$('vitals').classList.add('flat');$('needle').style.left='0%';
+  $('tarzan').classList.remove('faint');$('hint3').textContent='اضغطي على الصدر مع الدائرة';$('hint3').classList.remove('warn');
+  $('mouth').setAttribute('d','M141 85 h18');document.querySelectorAll('#chest .eye').forEach(e=>e.setAttribute('ry','1.2'));$('chestHeart').setAttribute('fill','#2c4c94');$('chestHeart').setAttribute('opacity','.55');
+  running3=true;cancelAnimationFrame(raf3);raf3=requestAnimationFrame(tick3);
+  setTimeout(()=>tSay('أنا بس جيت أسلم… 👋',2600),700)}
+function rateNow(){if(taps.length<2)return 0;const n=Math.min(4,taps.length-1);let sum=0;for(let i=taps.length-n;i<taps.length;i++)sum+=taps[i]-taps[i-1];return 60000/(sum/n)}
+$('chest').addEventListener('pointerdown',e=>{
+  e.preventDefault();if(!running3||c3done)return;
+  const ch=$('chest');ch.classList.add('down');setTimeout(()=>ch.classList.remove('down'),90);
+  const now=performance.now();if(taps.length&&now-taps[taps.length-1]>1500)taps=[];taps.push(now);
+  ecgMode='cpr';spike=.7;buzz(12);
+  if(ac)note(hz(45),ac.currentTime,.12,.12,'sine');
+  const r=rateNow();if(!r)return;
+  $('needle').style.left=Math.max(0,Math.min(100,(r-60)/100*100))+'%';
+  const ok=r>=97&&r<=125;
+  if(ok){good++;$('hint3').classList.remove('warn');$('hint3').textContent=good<GOAL?`ممتاز… ${good} من ${GOAL}`:'';}
+  else{$('hint3').classList.add('warn');$('hint3').textContent=r<97?'أسرع شوي 👆':'أبطأ شوي… خذيها بهدوء'}
+  $('cprBar').style.width=(good/GOAL*100)+'%';
+  if(good===8&&tarzanStage===0){tarzanStage=1;tSay('هو… هو بخير؟ 😰',2000)}
+  if(good===18&&tarzanStage===1){tarzanStage=2;tSay('أحس بدوخة… 😵‍💫',2000)}
+  if(good>=GOAL)reviveC3();
+});
+async function reviveC3(){
+  c3done=true;$('hint3').textContent='';
+  await sleep(500);ecgMode='normal';ecgPhase=0;$('vitals').classList.remove('flat');
+  let h=0;const up=setInterval(()=>{h+=6;$('hr').textContent=Math.min(h,78);if(h>=78)clearInterval(up)},60);
+  toast('رجع النبض! 💓');chime();buzz([40,60,40]);
+  await sleep(900);$('mouth').setAttribute('d','M138 82 q12 10 24 0');document.querySelectorAll('#chest .eye').forEach(e=>e.setAttribute('ry','4.5'));
+  $('chestHeart').setAttribute('fill','#ff6b8a');$('chestHeart').setAttribute('opacity','1');
+  await sleep(700);tSay('',0);$('tSay').classList.remove('on');
+  $('tarzan').classList.add('faint');soft();
+  await sleep(500);tSay('😵',0);
+  await sleep(1700);toast('أنقذتي اثنين بمناوبة وحدة 😂');
+  await sleep(2200);running3=false;cancelAnimationFrame(raf3);
+  showReward(3,'المانيكان رجع نبضه… وطرزان طاح من الحماس 😂 أشطر ممرضة بالعالم 🤍')}
+$('c3start').onclick=()=>{go('c3game');setTimeout(startC3,950)};
+
+/* ---------- chapter 4: today or never ---------- */
+let bpm4=78,lastBeat=0,nextBeat=0,raf4,running4=false,good4=0,tappedBeat=-1,beatIdx=0;
+const GOAL4=23,REVEAL=[6,12,18,23];
+function lubdub(){if(!ac)return;const t=ac.currentTime;[[0,58,.35],[.14,48,.25]].forEach(([dt,f,v])=>{const o=ac.createOscillator(),g=ac.createGain();
+  o.frequency.setValueAtTime(f*2,t+dt);o.frequency.exponentialRampToValueAtTime(f,t+dt+.08);g.gain.setValueAtTime(v,t+dt);g.gain.exponentialRampToValueAtTime(.001,t+dt+.16);
+  o.connect(g);g.connect(master);o.start(t+dt);o.stop(t+dt+.2)})}
+function setClock(){const m=52+good4,h=m>=60?5:4,mm=m%60;$('clock4').innerHTML=`${h}:${String(mm).padStart(2,'0')}<small>PM</small>`}
+function startC4(){
+  bpm4=78;good4=0;tappedBeat=-1;beatIdx=0;$('bpm4').textContent=bpm4;setClock();
+  $('love').classList.remove('full');$('love').querySelectorAll('span').forEach(x=>x.classList.remove('on'));
+  $('ring4').style.strokeDashoffset=578;$('judge').textContent='';$('hint4').textContent='المسي القلب لحظة ما ينبض';
+  if(ac)master.gain.setTargetAtTime(musicOn?.3:0,ac.currentTime,.4); // let the heart be the music
+  running4=true;nextBeat=performance.now()+600;cancelAnimationFrame(raf4);raf4=requestAnimationFrame(tick4)}
+function tick4(now){
+  if(!running4)return;
+  if(now>=nextBeat){lastBeat=nextBeat;beatIdx++;nextBeat=lastBeat+60000/bpm4;
+    const h=$('heart4');h.classList.remove('beat');void h.getBoundingClientRect();h.classList.add('beat');lubdub()}
+  raf4=requestAnimationFrame(tick4)}
+$('heartBtn').addEventListener('pointerdown',e=>{
+  e.preventDefault();if(!running4)return;const now=performance.now();
+  const dPrev=now-lastBeat,dNext=nextBeat-now,win=Math.max(110,(60000/bpm4)*.24);
+  const which=dPrev<=dNext?beatIdx:beatIdx+1,off=Math.min(dPrev,dNext);
+  if(off<=win&&which!==tappedBeat){
+    tappedBeat=which;good4++;bpm4=Math.min(145,78+Math.round(good4*(145-78)/GOAL4));
+    $('bpm4').textContent=bpm4;setClock();buzz(15);
+    $('judge').className='judge ok';$('judge').textContent=['دق','💓','أيوه','كذا','🤍'][good4%5];
+    $('ring4').style.strokeDashoffset=578*(1-good4/GOAL4);
+    REVEAL.forEach((r,i)=>{if(good4===r)$('love').children[i].classList.add('on')});
+    if(good4===9)$('hint4').textContent='قلبي بدا يسرع…';
+    if(good4===15)$('hint4').textContent='مو قادر أصبر لين 23…';
+    if(good4===20)$('hint4').textContent='خلاص… اليوم';
+    if(good4>=GOAL4)winC4();
+  }else{$('judge').className='judge bad';$('judge').textContent=off>win?'مو مع النبضة':'استني النبضة الجاية';buzz(40)}
+});
+async function winC4(){
+  running4=false;$('hint4').textContent='';$('judge').textContent='';$('love').classList.add('full');
+  // racing heart at 145
+  for(let i=0;i<6;i++){const h=$('heart4');h.classList.remove('beat');void h.getBoundingClientRect();h.classList.add('beat');lubdub();await sleep(414)}
+  if(ac)master.gain.setTargetAtTime(musicOn?.55:0,ac.currentTime,.6);
+  toast('5:15 PM · 145 💓');chime();buzz([50,80,50,80,120]);
+  await sleep(2600);
+  showReward(4,'19 سبتمبر 5:15 العصر… قلبي وصل 145 وقلتها لك 🤍')}
+$('c4start').onclick=()=>{go('c4game');setTimeout(startC4,950)};
+
+/* ---------- chapter 5: our language ---------- */
+const LANG=[
+  {who:'s',pre:'أول رسالة أرسلتها لك كانت',post:'… وما كنت أدري إنها بتغير كل شي',a:'Hey',o:['Hi','هلا','مرحبا'],
+   pos:'تحية · 29 أغسطس',ex:'رسالة وحدة بدت فيها القصة كلها'},
+  {who:'n',pre:'',post:'…! صار لي موقف اليوم',a:'تصوّر',o:['تخيّل','اسمع','شوف'],
+   pos:'فعل أمر · كلمة نجد المفضلة',ex:'إذا قالتها، اعرف إن جاية أحلى سالفة… وأنا أترك كل شي وأسمع 🤍'},
+  {who:'n',pre:'',post:' الدكتورة اليوم 😤',a:'طالبتني',o:['هاوشتني','زعلتني','كلمتني'],
+   pos:'فعل ماضي',ex:'كلمة ما سمعتها بحياتي قبلك… والحين صارت من كلماتي المفضلة 😂'},
+  {who:'n',pre:'طيب أنا',post:'… يعني لازم توافق 😌',a:'نجد من نجد',o:['نجد بنت نجد','من نجد','نجوده'],
+   pos:'عبارة · أحلى عبارة سمعتها بحياتي',ex:'وأنا الصدق ما أقدر أقول إلا 🤷🏻‍♂️'},
+  {who:'s',pre:'أنتِ اللي سميتيني',post:' 🌴',a:'طرزان',o:['المهندس','سولي','البطل'],
+   pos:'اسم · لقب صالح',ex:'مهندس كيميائي بالنهار… وطرزانك بكل وقت'},
+  {who:'s',pre:'وكلمة',post:' عندي فعل دائم… ما لها تاريخ انتهاء',a:'أحبك',o:['أعزك','أشتاق لك','أحترمك'],
+   pos:'فعل دائم · أول مرة 19 سبتمبر',ex:'قلتها 5:15 العصر… وبقولها كل يوم'}
+];
+let i5=0,lock5=false;
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function blank(){return '<span class="blank">؟</span>'}
+function showQ5(){
+  const q=LANG[i5];lock5=false;
+  $('dots5').innerHTML=LANG.map((_,k)=>`<i class="${k<i5?'on':''}"></i>`).join('');
+  const b=document.createElement('div');b.className='b5 '+q.who;b.innerHTML=`${q.pre} ${blank()}${q.post}`;
+  $('chat5').appendChild(b);$('chat5').scrollTop=$('chat5').scrollHeight;
+  $('hint5').textContent=q.who==='s'?'صالح يكتب…':'نجد تكتب…';$('hint5').classList.remove('warn');
+  $('opts5').innerHTML='';
+  shuffle([q.a,...q.o]).forEach(w=>{const o=document.createElement('button');o.className='opt';o.textContent=w;
+    o.onclick=()=>pick5(o,w,b);$('opts5').appendChild(o)})}
+const OOPS5=['لا لا… هذي لغة ثانية 😂','قريبة بس مو كلمتنا','فكري زين يا نجد 😼','مو هذي اللي نقولها'];
+async function pick5(o,w,b){
+  if(lock5)return;const q=LANG[i5];
+  if(w===q.a){lock5=true;o.classList.add('yes');chime();buzz(25);
+    const bl=b.querySelector('.blank');bl.textContent=w;bl.classList.add('filled');
+    $('hint5').textContent='';i5++;
+    await sleep(1100);
+    if(i5<LANG.length)showQ5();else finishC5()}
+  else{o.classList.remove('no');void o.offsetWidth;o.classList.add('no');soft();buzz(50);
+    $('hint5').textContent=OOPS5[Math.floor(Math.random()*OOPS5.length)];$('hint5').classList.add('warn')}}
+function startC5(){i5=0;$('chat5').innerHTML='';showQ5()}
+function finishC5(){
+  $('dots5').innerHTML=LANG.map(()=>'<i class="on"></i>').join('');
+  $('dict5').innerHTML='<h3>قاموس صالح ونجد · الطبعة الأولى</h3>'+LANG.map(q=>
+    `<div class="ent"><span class="w" dir="auto">${q.a}</span><span class="pos">${q.pos}</span><span class="ex">${q.ex}</span></div>`).join('');
+  setTimeout(()=>{go('c5done');chime()},500)}
+$('c5start').onclick=()=>{go('c5game');setTimeout(startC5,700)};
+$('c5finish').onclick=()=>showReward(5,'لغة ما يفهمها أحد بالعالم… غيرنا 🤍');
+
+/* ---------- chapter 6: the sky above Najd ---------- */
+const FINDS=[
+  {x:-.0159,y:.0051,q:'لقي الثريا',h:'عنقود نجوم صغيرة متجمعة… كانت فوق نجد بالضبط، بنص السما',
+   f:'الثريا كانت شبه عمودية فوق نجد… كأنها جاية تشوف وش اللي صار ✨'},
+  {x:.1225,y:.0745,q:'لقي المريخ',h:'نقطة حمرا قريبة من النص…',
+   f:'المريخ كان بأقرب وألمع حالاته، قبل يومك بأسبوع بس 🔴'},
+  {x:.2954,y:.1011,q:'لقي القمر',h:'قريب من المريخ… وكان منور',
+   f:'والقمر شبه مكتمل… يعني حتى السما كانت منورة لك 🌔'},
+  {x:-.3694,y:.8464,q:'لقي سهيل',h:'نجم لامع توه طالع من الأفق… جهة الجنوب تحت',
+   f:'وسهيل طلع توه من الأفق الجنوبي… «طلع سهيل وبرد الليل» ⭐'}
+];
+let i6=0,lock6=false,helpT;
+const NS='http://www.w3.org/2000/svg';
+function svgPt(e){const sv=$('skySvg6'),pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(sv.getScreenCTM().inverse())}
+function mark(x,y,cls,r){const c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('class',cls);$('skySvg6').appendChild(c);return c}
+function ask6(){
+  lock6=false;const t=FINDS[i6];$('q6').textContent=t.q;$('f6').textContent=t.h;$('f6').classList.remove('fact');
+  $('dots6').innerHTML=FINDS.map((_,k)=>`<i class="${k<i6?'on':''}"></i>`).join('');
+  clearTimeout(helpT);helpT=setTimeout(()=>{if(FINDS[i6]===t&&!lock6){const h=mark(t.x,t.y,'help',.05);h.dataset.tmp=1;$('f6').textContent=t.h+' (شوفي الدائرة الذهبية 👀)'}},14000)}
+function startC6(){
+  i6=0;$('sky6').classList.remove('lit');$('skySvg6').querySelectorAll('.found,.miss,.help').forEach(c=>c.remove());ask6()}
+$('sky6').addEventListener('pointerdown',async e=>{
+  e.preventDefault();if(lock6||i6>=FINDS.length)return;const p=svgPt(e),t=FINDS[i6];
+  if(Math.hypot(p.x-t.x,p.y-t.y)<.11){
+    lock6=true;clearTimeout(helpT);$('skySvg6').querySelectorAll('[data-tmp]').forEach(c=>c.remove());
+    mark(t.x,t.y,'found',.055);chime();buzz(30);
+    $('q6').textContent='لقيتيه 🤍';$('f6').textContent=t.f;$('f6').classList.add('fact');
+    i6++;$('dots6').innerHTML=FINDS.map((_,k)=>`<i class="${k<i6?'on':''}"></i>`).join('');
+    await sleep(3200);
+    if(i6<FINDS.length)ask6();else finishC6()}
+  else{const m=mark(p.x,p.y,'miss',.02);setTimeout(()=>m.remove(),650);soft();
+    $('f6').textContent='مو هنا… '+t.h;$('f6').classList.remove('fact')}
+});
+async function finishC6(){
+  $('sky6').classList.add('lit');$('q6').textContent='السما كلها نورت';$('f6').textContent='كل نجمة بمكانها الحقيقي… ليلة ما جيتي';
+  chime();await sleep(4200);
+  showReward(6,'حتى السما ليلة ما جيتي كانت تدري إنك نجد من نجد 🤍')}
+$('c6start').onclick=()=>{go('c6game');setTimeout(startC6,800)};
+
+/* ---------- chapter 7: 77 days ---------- */
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const MILES={1:'أول يوم بعد الـ Hey',21:'اليوم اللي قلت لك فيه أحبك 🤍',77:'عيد ميلادك 🎂'};
+let dots7=[],lit7=0,done7=false;
+function heartPts(n){
+  // concentric heart outlines, dots spaced evenly by arc length, outer ring first
+  const H=t=>[16*Math.pow(Math.sin(t),3),13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)];
+  const poly=[],cum=[0];for(let i=0;i<=1200;i++){poly.push(H(Math.PI*2*i/1200));if(i)cum.push(cum[i-1]+Math.hypot(poly[i][0]-poly[i-1][0],poly[i][1]-poly[i-1][1]))}
+  const L=cum[cum.length-1];
+  const rings=[[1,31],[.72,22],[.45,14],[.2,8],[0,2]],out=[];
+  rings.forEach(([k,c],ri)=>{
+    if(k===0){out.push([178,150],[202,150]);return}
+    for(let i=0;i<c;i++){const target=L*(i+(ri%2?.5:0))/c;let m=0;while(cum[m]<target)m++;const [x,y]=poly[Math.min(m,1200)];
+      out.push([190+x*k*10.5,150-(y+2)*k*10.5])}});
+  return out.slice(0,n)}
+function dateOf(n){const d=new Date(2026,7,29+n);return `${d.getDate()} ${MONTHS[d.getMonth()]}`}
+function startC7(){
+  done7=false;lit7=0;$('cnt7').textContent=0;$('d7').textContent='مرري صبعك على النقاط';$('m7').textContent='';
+  const sv=$('days7');sv.classList.remove('glow');sv.innerHTML='';
+  dots7=heartPts(77).map(([x,y],i)=>{const c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',7);
+    if(MILES[i+1])c.classList.add('mile');sv.appendChild(c);return{x,y,c,n:i+1,lit:false}})}
+function light7(e){
+  if(done7)return;const sv=$('days7'),pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(sv.getScreenCTM().inverse());
+  for(const d of dots7){if(!d.lit&&Math.hypot(d.x-p.x,d.y-p.y)<17){d.lit=true;d.c.classList.add('lit');d.c.setAttribute('r',8.5);lit7++;
+    $('cnt7').textContent=lit7;$('d7').textContent=`يوم ${d.n} · ${dateOf(d.n)}`;$('m7').textContent=MILES[d.n]||'';
+    if(ac)note(hz(62+[0,2,4,7,9,12,14,16][d.n%8]),ac.currentTime,.9,.05,'triangle');
+    if(MILES[d.n]){buzz(30);chime()}
+    if(lit7===77)finish7()}}}
+$('days7').addEventListener('pointerdown',e=>{e.preventDefault();try{$('days7').setPointerCapture(e.pointerId)}catch(_){}light7(e)});
+$('days7').addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')light7(e)});
+async function finish7(){
+  done7=true;$('days7').classList.add('glow');$('d7').textContent='77 يوم… كلها لك';$('m7').textContent='وهذي بس البداية 🤍';
+  chime();buzz([40,60,40]);await sleep(3600);
+  showReward(7,'77 يوم… ولو تعدينها بالنجوم ما خلصت 🤍')}
+$('c7start').onclick=()=>{go('c7game');setTimeout(startC7,700)};
+
+/* ---------- chapter 8: the final door ---------- */
+const LETTERS=WORD.filter(Boolean);
+function setupDoor(){
+  $('door').classList.remove('open');$('doorTxt').innerHTML='معك 7 حروف… والباب عنده الأخير<br>المسيه';
+  $('keys').innerHTML=LETTERS.map((l,i)=>`<span class="${i<7?'':'empty'}">${i<7?l:''}</span>`).join('')}
+$('door').onclick=async()=>{
+  if($('door').classList.contains('open'))return;
+  $('keys').lastElementChild.textContent=LETTERS[7];$('keys').lastElementChild.classList.remove('empty');chime();buzz(40);
+  await sleep(900);$('door').classList.add('open');$('doorTxt').textContent='الحرف الأخير: د';
+  if(ac){[62,66,69,74,78,81].forEach((m,i)=>note(hz(m),ac.currentTime+i*.12,2.4,.07,'triangle'))}
+  await sleep(2600);setupWord();go('c8word')};
+let next8=0;
+function setupWord(){
+  next8=0;let k=0;
+  $('slots8').innerHTML=WORD.map(ch=>ch?`<div class="slot" data-k="${k++}"></div>`:'<div class="gap" style="width:10px"></div>').join('');
+  $('tiles8').innerHTML='';$('wordTxt').textContent='رتبي الحروف… وطلعي الكلمة السرية';$('hint8').hidden=false;
+  shuffle(LETTERS.map((l,i)=>l)).forEach(l=>{const t=document.createElement('button');t.className='tile8';t.textContent=l;
+    t.onclick=()=>place8(t,l);$('tiles8').appendChild(t)})}
+async function place8(t,l){
+  if(l!==LETTERS[next8]){t.classList.remove('no');void t.offsetWidth;t.classList.add('no');soft();buzz(40);return}
+  t.classList.add('used');const sl=$('slots8').querySelector(`[data-k="${next8}"]`);sl.textContent=l;sl.classList.add('got');
+  if(ac)note(hz(62+[0,4,7,12,7,4,7,12][next8]),ac.currentTime,1,.08,'triangle');next8++;
+  if(next8===LETTERS.length){
+    $('hint8').hidden=true;await sleep(700);
+    $('slots8').innerHTML='<div class="word8">نجد من نجد</div>';$('tiles8').innerHTML='';
+    $('wordTxt').textContent='الكلمة السرية…';chime();buzz([40,60,40,60,120]);
+    await sleep(3200);openMirror()}}
+let camStream=null;
+async function openMirror(){
+  go('c8mirror');
+  const m=$('mirror');m.querySelectorAll('video,.alt').forEach(x=>x.remove());
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    const v=document.createElement('video');v.autoplay=true;v.muted=true;v.playsInline=true;v.srcObject=camStream;m.prepend(v);
+  }catch(e){
+    const a=document.createElement('div');a.className='alt';a.textContent='لو الكاميرا شغالة… كان شفتي وجهك هنا 🤍';m.prepend(a)}
+}
+function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}}
+$('toCake').onclick=()=>{stopCam();setupCake();go('c8cake')};
+let candles=[],outN=0,micStream=null,micRaf;
+function setupCake(){
+  const c=$('cake');c.querySelectorAll('.cnd,.smoke').forEach(x=>x.remove());candles=[];outN=0;
+  $('cakeCnt').textContent='انفخي على الجوال… أو المسي الشموع';$('micBtn').hidden=false;
+  for(let i=0;i<21;i++){const row=i<11?0:1,idx=row?i-11:i,cnt=row?10:11;
+    const x=(row?24:19)+idx*((row?52:62)/(cnt-1)),y=row?37:29; // % positions on the cake's top surface
+    const b=document.createElement('button');b.className='cnd';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label','شمعة');
+    b.onpointerdown=e=>{e.preventDefault();blow(b)};c.appendChild(b);candles.push(b)}}
+function blow(b){
+  if(b.classList.contains('out'))return;b.classList.add('out');outN++;
+  const s=document.createElement('span');s.className='smoke';s.style.left=b.style.left;s.style.top=`calc(${b.style.top} - 18px)`;$('cake').appendChild(s);setTimeout(()=>s.remove(),1400);
+  if(ac)note(hz(74+outN%8),ac.currentTime,.4,.03,'sine');
+  $('cakeCnt').textContent=outN<21?`${21-outN} شمعة باقية`:'';
+  if(outN===21)cakeDone()}
+$('micBtn').onclick=async()=>{
+  try{micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const src=ac.createMediaStreamSource(micStream),an=ac.createAnalyser();an.fftSize=512;src.connect(an);const buf=new Uint8Array(an.fftSize);
+    $('micBtn').hidden=true;$('cakeCnt').textContent='انفخي الحين… 🌬️';
+    const loop=()=>{an.getByteTimeDomainData(buf);let sum=0;for(const v of buf){const d=(v-128)/128;sum+=d*d}const rms=Math.sqrt(sum/buf.length);
+      if(rms>.12){const lit=candles.filter(c=>!c.classList.contains('out'));for(let k=0;k<Math.min(2,lit.length);k++)blow(lit[Math.floor(Math.random()*lit.length)])}
+      if(outN<21)micRaf=requestAnimationFrame(loop)};loop();
+  }catch(e){$('micBtn').hidden=true;$('cakeCnt').textContent='المايك مقفل… المسي الشموع بصبعك 🕯️'}};
+async function cakeDone(){
+  cancelAnimationFrame(micRaf);if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}
+  $('micBtn').hidden=true;toast('كل عام وأنتِ بخير 🎂');chime();buzz([60,80,60,80,160]);
+  await sleep(2800);startLetter()}
+const LETTER=[
+ 'نجودتي نجد من نجد 🤍',
+ 'كل عام وأنتِ روحي وغلاي اليوم صار عمرك 21 وصار لنا مع بعض 77 يوم 🤍 يمكن تشوفينها أيام قليلة بس أنا حاس إني أعرفك من سنين من كثر ما اني مرتاح معك اكثر من أي شخص 🤍',
+ 'تذكرين لما قلت لك إني عمري ما حسيت براحة مع إنسان غيرك وانك شخص غير ومختلف في حياتي؟ كنت أقصد كل حرف من أول لحظة حسيت بشعور غريب كأنك فاهمتني وعارفة وش أحس فيه واحس إنك الشخص الوحيد اللي يفهمني وهذا الشي ما لقيته عند أحد غيرك ولا راح ألقاه 🤍',
+ 'وأحلى شي؟ لما تجين تطلبين مني طلب وتقولين «طيب أنا نجد من نجد» الصدق تعرفين مقدر اقول الا 🤷🏻‍♂️🤍 العبارة هذي صارت أحلى كلمة سمعتها بحياتي فأنا من بين كل المدن اخترت نجد بس موب نجد المدينة لا نجد من نجد',
+ 'وما راح أنسى يوم 19 سبتمبر اليوم اللي قلت لك فيه إني أحبك من يومها وأنا ما تغيرت بس أنا صرت أحسن',
+ 'صرت أهتم بنفسي أكثر عشان أكون أفضل نسخة مني وأنا معك صرت أبي أكون موجود لك دايم في كل مود وكل لحظة حتى لو ماكنت بأفضل أحوالي وعمري ما اهتميت بأحد وبيومه كيف راح وش صار فيه مثل ما اهتميت فيك لأنك فعلًا نجد من نجد 🤍🤍',
+ 'وأمنيتي لك بالـ21؟ إن ربي يوفقنا ونتخرج أنا وإياك قريب بأعلى الدرجات وبعدها أخطبك وتصيرين لي على سنة الله ورسوله 🤍',
+ 'أحبك حب ما يعلمه إلا الله الله يخلينا لبعض يارب يا أحلى نجوده'];
+async function startLetter(){
+  go('c8letter');$('lt').innerHTML='';$('ltNext').hidden=true;$('ltSt').textContent='typing…';
+  if(ac)master.gain.setTargetAtTime(musicOn?.35:0,ac.currentTime,.8);
+  await sleep(1200);
+  for(const line of LETTER){
+    const ty=document.createElement('div');ty.className='typing show';ty.style.alignSelf='flex-start';ty.innerHTML='<i></i><i></i><i></i>';$('lt').appendChild(ty);
+    $('lt').scrollTop=$('lt').scrollHeight;await sleep(Math.min(3200,900+line.length*9));ty.remove();
+    const b=document.createElement('div');b.className='b5 s';b.textContent=line;$('lt').appendChild(b);$('lt').scrollTop=$('lt').scrollHeight;
+    if(ac)note(hz(81),ac.currentTime,.3,.04,'sine');
+    await sleep(Math.min(5200,1400+line.length*22))}
+  const sg=document.createElement('div');sg.className='sign';sg.textContent='مهندسك وطرزانك صالح 🤍';$('lt').appendChild(sg);
+  $('lt').scrollTop=$('lt').scrollHeight;$('ltSt').textContent='online';
+  await sleep(1800);$('ltNext').hidden=false;$('lt').scrollTop=$('lt').scrollHeight}
+$('ltNext').onclick=async()=>{
+  go('c8end');['end2','chip','igBtn','fin','replay'].forEach(id=>$(id).hidden=true);
+  if(ac)master.gain.setTargetAtTime(musicOn?.55:0,ac.currentTime,.8);
+  await sleep(4200);$('end2').hidden=false;await sleep(1400);$('chip').hidden=false;$('igBtn').hidden=false;
+  if(!state.done.includes(8)){state.done.push(8);save()}
+  await sleep(2600);$('fin').hidden=false;chime();await sleep(1500);$('replay').hidden=false};
+$('copyW').onclick=()=>{const t='نجد من نجد';
+  navigator.clipboard.writeText(t).then(()=>{$('copyW').textContent='انتسخت ✓'}).catch(()=>{const r=document.createRange();r.selectNodeContents($('chip').querySelector('b'));const sl=getSelection();sl.removeAllRanges();sl.addRange(r)})};
+$('replay').onclick=()=>{renderMap();go('map')};
+
+function winC2(){running2=false;cancelAnimationFrame(raf2);showReward(2,'21 – 24 وقلبتيها… الكابتن ما تخسر 🤍')}
+})();
+</script>
+
+</body>
+</html>
